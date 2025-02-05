@@ -1,8 +1,7 @@
 import chrono, { Chrono, Parser } from "chrono-node";
 import type { Moment } from "moment";
 
-import { DayOfWeek, NLDSettings } from "./settings";
-
+import { DayOfWeek } from "./settings";
 import {
   ORDINAL_NUMBER_PATTERN,
   getLastDayOfMonth,
@@ -61,7 +60,7 @@ export default class NLDParser {
     this.chrono = getConfiguredChrono();
   }
 
-  getParsedDate(selectedText: string, weekStartPreference: DayOfWeek, settings: NLDSettings = null): Date {
+  getParsedDate(selectedText: string, weekStartPreference: DayOfWeek): Date {
     const parser = this.chrono;
     const initialParse = parser.parse(selectedText);
     const weekdayIsCertain = initialParse[0]?.start.isCertain("weekday");
@@ -129,13 +128,6 @@ export default class NLDParser {
       });
     }
 
-    let parsedDate = parser.parseDate(selectedText, referenceDate, { locale });
-    if (settings != null && settings.appendTimeToDateWhenRelated) {
-      const timeFormat = settings.timeFormat;
-      const timeString = window.moment().format(timeFormat);
-      parsedDate = new Date(`${parsedDate.toDateString()} ${timeString}`);
-    }
-
-    return parsedDate
+    return parser.parseDate(selectedText, referenceDate, { locale });
   }
 }

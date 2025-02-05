@@ -126,7 +126,13 @@ export default class NaturalLanguageDates extends Plugin {
     @returns NLDResult: An object containing the date, a cloned Moment and the formatted string.
   */
   parseDate(dateString: string): NLDResult {
-    return this.parse(dateString, this.settings.format);
+    let format = this.settings.format;
+    if (this.settings.appendTimeToDateWhenRelated) {
+      if (dateString.match(/\bat\b|\bnow\b|\bin\b/gi)) {
+        format += " " + this.settings.timeFormat;
+      }
+    }
+    return this.parse(dateString, format);
   }
 
   parseTime(dateString: string): NLDResult {

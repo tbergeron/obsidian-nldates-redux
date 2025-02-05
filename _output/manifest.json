@@ -1,0 +1,11 @@
+{
+  "id": "nldates-obsidian-redux",
+  "name": "Natural Language Dates Redux",
+  "description": "Create date-links based on natural language",
+  "version": "0.7.0",
+  "author": "Tommy Bergeron",
+  "authorUrl": "https://github.com/tbergeron",
+  "fundingUrl": "https://www.paypal.com/donate/?hosted_button_id=93Z9BUUD778SG",
+  "isDesktopOnly": false,
+  "minAppVersion": "1.0.0"
+}
