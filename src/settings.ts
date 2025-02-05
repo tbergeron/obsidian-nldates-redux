@@ -16,6 +16,7 @@ export interface NLDSettings {
   autosuggestToggleLink: boolean;
   autocompleteTriggerPhrase: string;
   isAutosuggestEnabled: boolean;
+  appendTimeToDateWhenRelated: boolean;
 
   format: string;
   timeFormat: string;
@@ -31,6 +32,7 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   autosuggestToggleLink: true,
   autocompleteTriggerPhrase: "@",
   isAutosuggestEnabled: true,
+  appendTimeToDateWhenRelated: true,
 
   format: "YYYY-MM-DD",
   timeFormat: "HH:mm",
