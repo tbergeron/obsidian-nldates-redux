@@ -6,6 +6,8 @@ Now with Notion-like behavior!
 
 <img width="774" alt="Screenshot 2025-02-06 at 3 53 03 PM" src="https://github.com/user-attachments/assets/5d4fefcc-f33f-412a-a53d-50464eb41c64" />
 
+---
+
 ## Current issues
 ### Does not work on a task line when used with `obsidian-tasks`
 #### Problem
@@ -15,6 +17,8 @@ As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues
 ```
 #### Workaround
 None found yet. Please reach out if you know about one.
+
+---
 
 ## Features
 
