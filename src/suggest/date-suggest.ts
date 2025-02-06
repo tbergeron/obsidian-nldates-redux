@@ -85,7 +85,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       ].filter((items) => items.label.toLowerCase().startsWith(context.query));
     }
 
-    return [{ label: "Now" }, { label: "Today" }, { label: "Yesterday" }, { label: "Tomorrow" }].filter(
+    return [{ label: "Now" }, { label: "Today" }, { label: "Yesterday" }, { label: "Tomorrow" }, { label: "In 1 hour"}, { label: "1 hour ago" }].filter(
       (items) => items.label.toLowerCase().startsWith(context.query)
     );
   }

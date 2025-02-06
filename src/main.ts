@@ -128,7 +128,7 @@ export default class NaturalLanguageDates extends Plugin {
   parseDate(dateString: string): NLDResult {
     let format = this.settings.format;
     if (this.settings.appendTimeToDateWhenRelated) {
-      if (dateString.match(/\bat\b|\bnow\b|\bin\b/gi)) {
+      if (dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi)) {
         format += this.settings.separator + this.settings.timeFormat;
       }
     }
