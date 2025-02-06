@@ -100,7 +100,7 @@ In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` 
 
 ### Manual installation
 
-Unzip the [latest release](https://github.com/argenos/nldates-obsidian/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
+Unzip the [latest release](https://github.com/tbergeron/nldates-redux/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
 
 # Credits
 

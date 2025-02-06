@@ -1,5 +1,5 @@
 {
-  "id": "nldates-obsidian-redux",
+  "id": "nldates-redux",
   "name": "Natural Language Dates Redux",
   "description": "Work with dates in natural language. Now with Notion-like behavior!",
   "version": "0.7.0",
