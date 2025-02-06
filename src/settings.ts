@@ -70,16 +70,16 @@ export class NLDSettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     containerEl.createEl("h2", {
-      text: "Natural Language Dates",
+      text: "Natural Language Dates Redux",
     });
 
     containerEl.createEl("h3", {
-      text: "Parser settings",
+      text: "Format settings",
     });
 
     new Setting(containerEl)
       .setName("Date format")
-      .setDesc("Output format for parsed dates")
+      .setDesc("Specify the format for displaying dates (default: YYYY-MM-DD)")
       .addMomentFormat((text) =>
         text
           .setDefaultFormat("YYYY-MM-DD")
@@ -91,8 +91,48 @@ export class NLDSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Time format")
+      .setDesc("Specify the format for displaying time (default: HH:mm)")
+      .addMomentFormat((text) =>
+        text
+          .setDefaultFormat("HH:mm")
+          .setValue(this.plugin.settings.timeFormat)
+          .onChange(async (value) => {
+            this.plugin.settings.timeFormat = value || "HH:mm";
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Date-Time Separator")
+      .setDesc("Character(s) used to separate date and time (default: space)")
+      .addText((text) =>
+        text
+          .setPlaceholder("Enter separator")
+          .setValue(this.plugin.settings.separator)
+          .onChange(async (value) => {
+            this.plugin.settings.separator = value || " ";
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Append time to date when relevant")
+      .setDesc(
+        `Enable Notion-like behavior. ie. @now includes date and time, while @today includes only the date. If disabled, the plugin will behave like the original version and will use the date format *only* and time format will only be used for commands.`
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.appendTimeToDateWhenRelated)
+          .onChange(async (value) => {
+            this.plugin.settings.appendTimeToDateWhenRelated = value || false;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
       .setName("Week starts on")
-      .setDesc("Which day to consider as the start of the week")
+      .setDesc("Select the day to be considered as the start of the week")
       .addDropdown((dropdown) => {
         dropdown.addOption("locale-default", `Locale default (${localeWeekStart})`);
         localizedWeekdays.forEach((day, i) => {
@@ -106,43 +146,13 @@ export class NLDSettingsTab extends PluginSettingTab {
       });
 
     containerEl.createEl("h3", {
-      text: "Hotkey formatting settings",
+      text: "Autosuggestion",
     });
 
     new Setting(containerEl)
-      .setName("Time format")
-      .setDesc("Format for the hotkeys that include the current time")
-      .addMomentFormat((text) =>
-        text
-          .setDefaultFormat("HH:mm")
-          .setValue(this.plugin.settings.timeFormat)
-          .onChange(async (value) => {
-            this.plugin.settings.timeFormat = value || "HH:mm";
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Separator")
-      .setDesc("Separator between date and time for entries that have both")
-      .addText((text) =>
-        text
-          .setPlaceholder("Separator is empty")
-          .setValue(this.plugin.settings.separator)
-          .onChange(async (value) => {
-            this.plugin.settings.separator = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    containerEl.createEl("h3", {
-      text: "Date Autosuggest",
-    });
-
-    new Setting(containerEl)
-      .setName("Enable date autosuggest")
+      .setName("Enable date autosuggestion")
       .setDesc(
-        `Input dates with natural language. Open the suggest menu with ${this.plugin.settings.autocompleteTriggerPhrase}`
+        `Toggle to enable or disable the autosuggestion menu, triggered by ${this.plugin.settings.autocompleteTriggerPhrase}`
       )
       .addToggle((toggle) =>
         toggle
@@ -154,28 +164,28 @@ export class NLDSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Add dates as link?")
-      .setDesc(
-        "If enabled, dates created via autosuggest will be wrapped in [[wikilinks]]"
-      )
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.autosuggestToggleLink)
-          .onChange(async (value) => {
-            this.plugin.settings.autosuggestToggleLink = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("Trigger phrase")
-      .setDesc("Character(s) that will cause the date autosuggest to open")
+      .setName("Trigger")
+      .setDesc("Character(s) to trigger autosuggestion (default: @)")
       .addMomentFormat((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.autocompleteTriggerPhrase)
           .setValue(this.plugin.settings.autocompleteTriggerPhrase || "@")
           .onChange(async (value) => {
             this.plugin.settings.autocompleteTriggerPhrase = value.trim();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Wrap dates in links")
+      .setDesc(
+        "If enabled, dates created via autosuggestion will be wrapped in [[wikilinks]]"
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.autosuggestToggleLink)
+          .onChange(async (value) => {
+            this.plugin.settings.autosuggestToggleLink = value;
             await this.plugin.saveSettings();
           })
       );

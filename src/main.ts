@@ -129,7 +129,7 @@ export default class NaturalLanguageDates extends Plugin {
     let format = this.settings.format;
     if (this.settings.appendTimeToDateWhenRelated) {
       if (dateString.match(/\bat\b|\bnow\b|\bin\b/gi)) {
-        format += " " + this.settings.timeFormat;
+        format += this.settings.separator + this.settings.timeFormat;
       }
     }
     return this.parse(dateString, format);
