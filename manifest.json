@@ -1,7 +1,7 @@
 {
   "id": "nldates-obsidian-redux",
   "name": "Natural Language Dates Redux",
-  "description": "Create date-links based on natural language",
+  "description": "Work with dates in natural language. Now with Notion-like behavior!",
   "version": "0.7.0",
   "author": "Tommy Bergeron",
   "authorUrl": "https://github.com/tbergeron",
