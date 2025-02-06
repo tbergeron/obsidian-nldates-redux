@@ -90,6 +90,6 @@ Unzip the [latest release](https://github.com/argenos/nldates-obsidian/releases/
 
 # Credits
 
-This plugin was originally made by Argentina Ortega Sáinz @argenos but seems to have been abandoned so I decided I would start maintaining it and introduce features that I always wanted and were requested many times.
+This plugin was originally made by Argentina Ortega Sáinz (argenos) but seems to have been abandoned for the last 2+ years. I decided I'd start maintaining it and introduce features that I always wanted and were requested many times on the original repository.
 
-Feel free to send PRs to this repository, I will check and consider any of them if they make sense.
+Feel free to send pull requests, I will check and consider any of them if they make sense.
