@@ -9,7 +9,7 @@ Now with Notion-like behavior!
 ## Current issues
 ### Does not work on a task line when used with `obsidian-tasks`
 #### Problem
-As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/2780), `obsidian-tasks` has a bug that prevents this plugin to display its autosuggestion popup when typing on "task lines" ie.
+As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/2780), `obsidian-tasks` has a bug that sometimes prevents this plugin to display its autosuggestion popup when typing on "task lines" ie.
 ```
 - [ ] It won't work on such line
 ```
