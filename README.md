@@ -87,3 +87,9 @@ In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` 
 ### Manual installation
 
 Unzip the [latest release](https://github.com/argenos/nldates-obsidian/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
+
+# Credit
+
+This plugin was originally made by Argentina Ortega Sáinz @argenos but seems to have been abandoned so I decided I would start maintaining it and introduce features that I always wanted and were requested many times.
+
+Feel free to send PRs to this repository, I will check and consider any of them if they make sense.
