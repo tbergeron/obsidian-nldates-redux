@@ -1,4 +1,4 @@
-# Natural Language Dates REDUX
+# Natural Language Dates Redux
 
 Insert timestamps and cross-link your daily notes with the flexibility of natural language. NLDates provides a suite of tools that makes working with dates and times within Obsidian frictionless.
 
@@ -87,3 +87,9 @@ In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` 
 ### Manual installation
 
 Unzip the [latest release](https://github.com/argenos/nldates-obsidian/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
+
+# Credits
+
+This plugin was originally made by Argentina Ortega Sáinz (argenos) but seems to have been abandoned for the last 2+ years. I decided I'd start maintaining it and introduce features that I always wanted and were requested many times on the original repository.
+
+Feel free to send pull requests, I will check and consider any of them if they make sense.
