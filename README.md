@@ -1,6 +1,6 @@
-# Natural Language Dates Redux
+# obsidian-nldates-redux
 
-Insert timestamps and cross-link your daily notes with the flexibility of natural language.
+Insert timestamps and cross-link your daily notes with the flexibility of natural language. Based on `argenos/nldates-obsidian`.
 
 Now with Notion-like behavior!
 
