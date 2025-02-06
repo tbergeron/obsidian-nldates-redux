@@ -1,8 +1,10 @@
 # Natural Language Dates REDUX
 
+Insert timestamps and cross-link your daily notes with the flexibility of natural language. NLDates provides a suite of tools that makes working with dates and times within Obsidian frictionless.
+
 Now with Notion-like behavior!
 
-Insert timestamps and cross-link your daily notes with the flexibility of natural language. NLDates provides a suite of tools that makes working with dates and times within Obsidian frictionless.
+<img width="774" alt="Screenshot 2025-02-06 at 3 53 03 PM" src="https://github.com/user-attachments/assets/5d4fefcc-f33f-412a-a53d-50464eb41c64" />
 
 ## Features
 
