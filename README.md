@@ -16,7 +16,11 @@ As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues
 - [ ] It won't work on such line
 ```
 #### Workaround
-None found yet. Please reach out if you know about one.
+Make sure you load this plugin **before** loading `obsidian-tasks` and everything will work properly.
+
+One way is make sure this plugin is listed **before** `obsidian-tasks` in `.obsidian/community-plugins.json`
+
+If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-tasks` to "Short Delay".
 
 ---
 
