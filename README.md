@@ -8,22 +8,6 @@ Now with Notion-like behavior!
 
 ---
 
-## Current issues
-### Does not work on a task line when used with `obsidian-tasks`
-#### Problem
-As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/2780), `obsidian-tasks` has a bug that sometimes prevents this plugin to display its autosuggestion popup when typing on "task lines" ie.
-```
-- [ ] It won't work on such line
-```
-#### Workaround
-Make sure you load this plugin **before** loading `obsidian-tasks` and everything will work properly.
-
-One way is make sure this plugin is listed **before** `obsidian-tasks` in `.obsidian/community-plugins.json`
-
-If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-tasks` to "Short Delay".
-
----
-
 ## Features
 
 - [Date Autosuggestion](#date-autosuggestion)
@@ -32,6 +16,8 @@ If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-
 
 If a date is not recognized, the link won't be created.
 
+---
+
 ## Date Autosuggestion
 
 <img src="https://user-images.githubusercontent.com/693981/116645561-1d565700-a944-11eb-9166-f55e72dc65bc.gif" alt="autosuggestion-demo" width="500" />
@@ -39,6 +25,8 @@ If a date is not recognized, the link won't be created.
 Expand dates using natural language inline within the editor view.
 
 Typing `@today` <kbd>Enter</kbd> will automatically be expanded to the current date. Press <kbd>Shift</kbd> at the same time to keep the input text as an alias (e.g. `@today` → `[[202112-27|today]]`).
+
+---
 
 ## `nldates` URI Action
 
@@ -74,6 +62,8 @@ Opens the date picker menu
 
 **Note:** You can of course add hotkeys to each of these commands.
 
+---
+
 ## Usage
 
 ### Examples
@@ -98,6 +88,8 @@ The parser supports most date/time formats, including:
 
 <img src="https://user-images.githubusercontent.com/5426039/98358876-a640a580-2027-11eb-8efc-015362a94321.gif" alt="Supported selections" style="zoom:80%;" />
 
+---
+
 ## How to install
 
 In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` and search for `Natural Language Dates`.
@@ -105,6 +97,24 @@ In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` 
 ### Manual installation
 
 Unzip the [latest release](https://github.com/tbergeron/nldates-redux/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
+
+---
+
+## Current issues
+### Does not work on a task line when used with `obsidian-tasks`
+#### Problem
+As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/2780), `obsidian-tasks` has a bug that sometimes prevents this plugin to display its autosuggestion popup when typing on "task lines" ie.
+```
+- [ ] It won't work on such line
+```
+#### Workaround
+Make sure you load this plugin **before** loading `obsidian-tasks` and everything will work properly.
+
+One way is make sure this plugin is listed **before** `obsidian-tasks` in `.obsidian/community-plugins.json`
+
+If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-tasks` to "Short Delay".
+
+---
 
 # Credits
 
