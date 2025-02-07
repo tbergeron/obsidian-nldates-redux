@@ -18,11 +18,21 @@ const daysOfWeek: Omit<DayOfWeek, "locale-default">[] = [
   "saturday",
 ];
 
+declare module 'obsidian' {
+  interface Editor {
+    cm: {
+      state: {
+        wordAt(pos: number): { from: number, to: number } | null;
+      };
+    };
+  }
+}
+
 export default function getWordBoundaries(editor: Editor): EditorRange {
   const cursor = editor.getCursor();
 
     const pos = editor.posToOffset(cursor);
-    const word = (editor as any).cm.state.wordAt(pos);
+    const word = editor.cm.state.wordAt(pos);
     const wordStart = editor.offsetToPos(word.from);
     const wordEnd = editor.offsetToPos(word.to);
     return {
@@ -76,8 +86,17 @@ export function getLocaleWeekStart(): Omit<DayOfWeek, "locale-default"> {
   return daysOfWeek[startOfWeek];
 }
 
+declare module 'obsidian' {
+  interface Vault {
+    getConfig(configName: string): boolean;
+  }
+  interface App {
+    vault: Vault;
+  }
+}
+
 export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
-  const useMarkdownLinks = (app.vault as any).getConfig("useMarkdownLinks");
+  const useMarkdownLinks = app.vault.getConfig("useMarkdownLinks");
   const path = normalizePath(subpath);
 
   if (useMarkdownLinks) {

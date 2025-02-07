@@ -22,50 +22,43 @@ export default class NaturalLanguageDates extends Plugin {
     this.addCommand({
       id: "nlp-dates",
       name: "Parse natural language date",
-      callback: () => getParseCommand(this, "replace"),
-      hotkeys: [],
+      callback: () => getParseCommand(this, "replace")
     });
 
     this.addCommand({
       id: "nlp-dates-link",
       name: "Parse natural language date (as link)",
-      callback: () => getParseCommand(this, "link"),
-      hotkeys: [],
+      callback: () => getParseCommand(this, "link")
     });
 
     this.addCommand({
       id: "nlp-date-clean",
       name: "Parse natural language date (as plain text)",
-      callback: () => getParseCommand(this, "clean"),
-      hotkeys: [],
+      callback: () => getParseCommand(this, "clean")
     });
 
     this.addCommand({
       id: "nlp-parse-time",
       name: "Parse natural language time",
-      callback: () => getParseCommand(this, "time"),
-      hotkeys: [],
+      callback: () => getParseCommand(this, "time")
     });
 
     this.addCommand({
       id: "nlp-now",
       name: "Insert the current date and time",
-      callback: () => getNowCommand(this),
-      hotkeys: [],
+      callback: () => getNowCommand(this)
     });
 
     this.addCommand({
       id: "nlp-today",
       name: "Insert the current date",
-      callback: () => getCurrentDateCommand(this),
-      hotkeys: [],
+      callback: () => getCurrentDateCommand(this)
     });
 
     this.addCommand({
       id: "nlp-time",
       name: "Insert the current time",
-      callback: () => getCurrentTimeCommand(this),
-      hotkeys: [],
+      callback: () => getCurrentTimeCommand(this)
     });
 
     this.addCommand({
@@ -76,8 +69,7 @@ export default class NaturalLanguageDates extends Plugin {
           return !!this.app.workspace.getActiveViewOfType(MarkdownView);
         }
         new DatePickerModal(this.app, this).open();
-      },
-      hotkeys: [],
+      }
     });
 
     this.addSettingTab(new NLDSettingsTab(this.app, this));
