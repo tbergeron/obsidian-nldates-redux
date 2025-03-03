@@ -4,11 +4,10 @@ import {
   EditorPosition,
   EditorSuggest,
   EditorSuggestContext,
-  EditorSuggestTriggerInfo,
-  TFile,
-  FileManager
+  EditorSuggestTriggerInfo
 } from "obsidian";
 import type NaturalLanguageDates from "src/main";
+import { generateMarkdownLink } from "src/utils";
 
 interface IDateCompletion {
   label: string;
@@ -109,9 +108,9 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     if (makeIntoLink) {
-      const file = this.app.vault.getAbstractFileByPath(dateStr) as TFile;
-      dateStr = this.app.fileManager.generateMarkdownLink(
-        file,
+      dateStr = generateMarkdownLink(
+        this.app,
+        dateStr,
         includeAlias ? suggestion.label : undefined
       );
     }

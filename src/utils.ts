@@ -95,6 +95,42 @@ declare module 'obsidian' {
   }
 }
 
+export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
+  const useMarkdownLinks = app.vault.getConfig("useMarkdownLinks");
+  const path = normalizePath(subpath);
+
+  if (useMarkdownLinks) {
+    if (alias) {
+      return `[${alias}](${path.replace(/ /g, "%20")})`;
+    } else {
+      return `[${subpath}](${path})`;
+    }
+  } else {
+    if (alias) {
+      return `[[${path}|${alias}]]`;
+    } else {
+      return `[[${path}]]`;
+    }
+  }
+}
+
+// export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
+  // const path = normalizePath(subpath);
+
+  // NOTE: did not work because getAbstractFileByPath cannot be used with non-existing files
+  // const file = app.vault.getAbstractFileByPath(path) as TFile;
+
+  // NOTE: did not work because it gave "Uncaught TypeError: Cannot read properties of undefined (reading 'lastIndexOf')"
+  // const file = new TFile();
+  // file.basename = path.replace(/.*\/(.*)\.md/, "$1");
+  // file.extension = "md";
+  // file.name = `${file.basename}.md`;
+  // file.path = path;
+  // file.vault = app.vault;
+
+  // return app.fileManager.generateMarkdownLink(file, "", undefined, alias);
+// }
+
 export async function getOrCreateDailyNote(date: Moment): Promise<TFile | null> {
   // Borrowed from the Slated plugin:
   // https://github.com/tgrosinger/slated-obsidian/blob/main/src/vault.ts#L17
