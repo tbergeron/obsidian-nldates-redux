@@ -6,9 +6,9 @@ import {
   EditorSuggestContext,
   EditorSuggestTriggerInfo,
   TFile,
+  FileManager
 } from "obsidian";
 import type NaturalLanguageDates from "src/main";
-import { generateMarkdownLink } from "src/utils";
 
 interface IDateCompletion {
   label: string;
@@ -23,7 +23,6 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     this.app = app;
     this.plugin = plugin;
 
-    // @ts-ignore
     this.scope.register(["Shift"], "Enter", (evt: KeyboardEvent) => {
       // @ts-ignore
       this.suggestions.useSelectedItem(evt);
@@ -110,7 +109,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     if (makeIntoLink) {
-      dateStr = generateMarkdownLink(
+      dateStr = FileManager.generateMarkdownLink(
         this.app,
         dateStr,
         includeAlias ? suggestion.label : undefined
@@ -122,8 +121,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
 
   onTrigger(
     cursor: EditorPosition,
-    editor: Editor,
-    file: TFile
+    editor: Editor
   ): EditorSuggestTriggerInfo {
     if (!this.plugin.settings.isAutosuggestEnabled) {
       return null;

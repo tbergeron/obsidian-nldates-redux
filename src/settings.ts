@@ -69,13 +69,7 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h2", {
-      text: "Natural Language Dates Redux",
-    });
-
-    containerEl.createEl("h3", {
-      text: "Format settings",
-    });
+    new Setting(containerEl).setName('Format').setHeading();
 
     new Setting(containerEl)
       .setName("Date format")
@@ -104,7 +98,7 @@ export class NLDSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Date-Time Separator")
+      .setName("Date-time separator")
       .setDesc("Character(s) used to separate date and time (default: space)")
       .addText((text) =>
         text
@@ -145,9 +139,7 @@ export class NLDSettingsTab extends PluginSettingTab {
         });
       });
 
-    containerEl.createEl("h3", {
-      text: "Autosuggestion",
-    });
+    new Setting(containerEl).setName('Autosuggestion').setHeading();
 
     new Setting(containerEl)
       .setName("Enable date autosuggestion")

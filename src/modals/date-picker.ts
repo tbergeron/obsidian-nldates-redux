@@ -1,5 +1,4 @@
-import { App, MarkdownView, Modal, Setting } from "obsidian";
-import { generateMarkdownLink } from "src/utils";
+import { App, MarkdownView, Modal, Setting, FileManager } from "obsidian";
 import type NaturalLanguageDates from "../main";
 
 export default class DatePickerModal extends Modal {
@@ -32,7 +31,7 @@ export default class DatePickerModal extends Modal {
         : "";
 
       if (insertAsLink) {
-        parsedDateString = generateMarkdownLink(
+        parsedDateString = FileManager.generateMarkdownLink(
           this.app,
           parsedDateString,
           shouldIncludeAlias ? cleanDateInput : undefined
@@ -59,7 +58,7 @@ export default class DatePickerModal extends Modal {
       previewEl = dateInputEl.descEl;
 
       new Setting(formEl)
-        .setName("Date Format")
+        .setName("Date format")
         .setDesc("Moment format to be used")
         .addMomentFormat((momentEl) => {
           momentEl.setPlaceholder("YYYY-MM-DD HH:mm");
@@ -89,7 +88,7 @@ export default class DatePickerModal extends Modal {
         buttonContainerEl.createEl("button", {
           attr: { type: "submit" },
           cls: "mod-cta",
-          text: "Insert Date",
+          text: "Insert date",
         });
       });
 

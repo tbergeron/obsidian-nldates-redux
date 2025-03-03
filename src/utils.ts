@@ -95,25 +95,6 @@ declare module 'obsidian' {
   }
 }
 
-export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
-  const useMarkdownLinks = app.vault.getConfig("useMarkdownLinks");
-  const path = normalizePath(subpath);
-
-  if (useMarkdownLinks) {
-    if (alias) {
-      return `[${alias}](${path.replace(/ /g, "%20")})`;
-    } else {
-      return `[${subpath}](${path})`;
-    }
-  } else {
-    if (alias) {
-      return `[[${path}|${alias}]]`;
-    } else {
-      return `[[${path}]]`;
-    }
-  }
-}
-
 export async function getOrCreateDailyNote(date: Moment): Promise<TFile | null> {
   // Borrowed from the Slated plugin:
   // https://github.com/tgrosinger/slated-obsidian/blob/main/src/vault.ts#L17
