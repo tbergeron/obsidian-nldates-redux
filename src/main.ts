@@ -123,7 +123,7 @@ export default class NaturalLanguageDates extends Plugin {
       // assume it's date time if it contains:
       if (dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi)) {
         // but make an exception and assume it's only date if it contains:
-        if (!dateString.match(/\bday\b|\bmonth\b|\byear\b|\bweek\b/gi)) {
+        if (!dateString.match(/\bdays?\b|\bmonths?\b|\byears?\b|\bweeks?\b/gi)) {
           format += this.settings.separator + this.settings.timeFormat;
         }
       }
