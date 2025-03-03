@@ -2,7 +2,7 @@
   "id": "nldates-redux",
   "name": "Natural Language Dates Redux",
   "description": "Work with dates in natural language. Now with Notion-like behavior!",
-  "version": "0.7.0",
+  "version": "0.7.8",
   "author": "Tommy Bergeron",
   "authorUrl": "https://github.com/tbergeron",
   "fundingUrl": "https://www.paypal.com/donate/?hosted_button_id=93Z9BUUD778SG",
