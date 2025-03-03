@@ -1,4 +1,4 @@
-import { App, MarkdownView, Modal, Setting, FileManager } from "obsidian";
+import { App, MarkdownView, Modal, Setting, TFile } from "obsidian";
 import type NaturalLanguageDates from "../main";
 
 export default class DatePickerModal extends Modal {
@@ -31,9 +31,9 @@ export default class DatePickerModal extends Modal {
         : "";
 
       if (insertAsLink) {
-        parsedDateString = FileManager.generateMarkdownLink(
-          this.app,
-          parsedDateString,
+        const file = this.app.vault.getAbstractFileByPath(parsedDateString) as TFile;
+        parsedDateString = this.app.fileManager.generateMarkdownLink(
+          file,
           shouldIncludeAlias ? cleanDateInput : undefined
         );
       }

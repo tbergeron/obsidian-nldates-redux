@@ -109,9 +109,9 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     if (makeIntoLink) {
-      dateStr = FileManager.generateMarkdownLink(
-        this.app,
-        dateStr,
+      const file = this.app.vault.getAbstractFileByPath(dateStr) as TFile;
+      dateStr = this.app.fileManager.generateMarkdownLink(
+        file,
         includeAlias ? suggestion.label : undefined
       );
     }
