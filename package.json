@@ -1,6 +1,6 @@
 {
   "name": "nldates-redux",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Plugin to parse natural language dates in Obsidian",
   "main": "main.js",
   "scripts": {
