@@ -120,8 +120,12 @@ export default class NaturalLanguageDates extends Plugin {
   parseDate(dateString: string): NLDResult {
     let format = this.settings.format;
     if (this.settings.appendTimeToDateWhenRelated) {
+      // assume it's date time if it contains:
       if (dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi)) {
-        format += this.settings.separator + this.settings.timeFormat;
+        // but make an exception and assume it's only date if it contains:
+        if (!dateString.match(/\bday\b|\bmonth\b|\byear\b|\bweek\b/gi)) {
+          format += this.settings.separator + this.settings.timeFormat;
+        }
       }
     }
     return this.parse(dateString, format);
