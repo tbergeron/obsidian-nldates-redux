@@ -7,7 +7,7 @@ import {
   EditorSuggestTriggerInfo
 } from "obsidian";
 import type NaturalLanguageDates from "src/main";
-import { generateMarkdownLink } from "src/utils";
+import { generateMarkdownLink, getDateLinkAlias } from "src/utils";
 
 interface IDateCompletion {
   label: string;
@@ -108,15 +108,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     if (makeIntoLink) {
-      let alias: string | undefined = undefined;
-      if (includeAlias) {
-        alias = suggestion.label;
-      } else if (this.plugin.settings.defaultAlias) {
-        const parsed = this.plugin.parseDate(suggestion.label);
-        alias = parsed.moment.isValid()
-          ? parsed.moment.format(this.plugin.settings.defaultAlias)
-          : undefined;
-      }
+      const alias = getDateLinkAlias(this.plugin, suggestion.label, includeAlias);
       dateStr = generateMarkdownLink(
         this.app,
         dateStr,

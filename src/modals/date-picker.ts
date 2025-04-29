@@ -1,5 +1,5 @@
 import { App, MarkdownView, Modal, Setting } from "obsidian";
-import { generateMarkdownLink } from "src/utils";
+import { generateMarkdownLink, getDateLinkAlias } from "src/utils";
 import type NaturalLanguageDates from "../main";
 
 export default class DatePickerModal extends Modal {
@@ -32,14 +32,7 @@ export default class DatePickerModal extends Modal {
         : "";
 
       if (insertAsLink) {
-        let alias: string | undefined = undefined;
-        if (shouldIncludeAlias) {
-          alias = cleanDateInput;
-        } else if (this.plugin.settings.defaultAlias) {
-          alias = parsedDate.moment.isValid()
-            ? parsedDate.moment.format(this.plugin.settings.defaultAlias)
-            : undefined;
-        }
+        const alias = getDateLinkAlias(this.plugin, cleanDateInput, shouldIncludeAlias);
         parsedDateString = generateMarkdownLink(
           this.app,
           parsedDateString,
