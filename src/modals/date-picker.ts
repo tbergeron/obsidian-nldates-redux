@@ -32,10 +32,18 @@ export default class DatePickerModal extends Modal {
         : "";
 
       if (insertAsLink) {
+        let alias: string | undefined = undefined;
+        if (shouldIncludeAlias) {
+          alias = cleanDateInput;
+        } else if (this.plugin.settings.defaultAlias) {
+          alias = parsedDate.moment.isValid()
+            ? parsedDate.moment.format(this.plugin.settings.defaultAlias)
+            : undefined;
+        }
         parsedDateString = generateMarkdownLink(
           this.app,
           parsedDateString,
-          shouldIncludeAlias ? cleanDateInput : undefined
+          alias
         );
       }
 

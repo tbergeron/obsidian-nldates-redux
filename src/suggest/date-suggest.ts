@@ -108,10 +108,19 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     if (makeIntoLink) {
+      let alias: string | undefined = undefined;
+      if (includeAlias) {
+        alias = suggestion.label;
+      } else if (this.plugin.settings.defaultAlias) {
+        const parsed = this.plugin.parseDate(suggestion.label);
+        alias = parsed.moment.isValid()
+          ? parsed.moment.format(this.plugin.settings.defaultAlias)
+          : undefined;
+      }
       dateStr = generateMarkdownLink(
         this.app,
         dateStr,
-        includeAlias ? suggestion.label : undefined
+        alias
       );
     }
 

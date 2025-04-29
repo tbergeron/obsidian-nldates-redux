@@ -19,6 +19,7 @@ export interface NLDSettings {
   appendTimeToDateWhenRelated: boolean;
 
   format: string;
+  defaultAlias: string;
   timeFormat: string;
   separator: string;
   weekStart: DayOfWeek;
@@ -35,6 +36,7 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   appendTimeToDateWhenRelated: true,
 
   format: "YYYY-MM-DD",
+  defaultAlias: "",
   timeFormat: "HH:mm",
   separator: " ",
   weekStart: "locale-default",
@@ -181,5 +183,18 @@ export class NLDSettingsTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    new Setting(containerEl)
+    .setName("Default alias for links")
+    .setDesc("Specify a time format as the default alias when creating wikilink dates. (default: none)")
+    .addText((text) =>
+      text
+        .setPlaceholder("dddd, MMMM Do YYYY")
+        .setValue(this.plugin.settings.defaultAlias)
+        .onChange(async (value) => {
+          this.plugin.settings.defaultAlias = value || "";
+          await this.plugin.saveSettings();
+        })
+    );
   }
 }
