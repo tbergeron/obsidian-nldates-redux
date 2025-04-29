@@ -1,5 +1,5 @@
 import { MarkdownView } from "obsidian";
-import { adjustCursor, getSelectedText } from "./utils";
+import { adjustCursor, getSelectedText, getDateLinkAlias } from "./utils";
 import NaturalLanguageDates from "./main";
 
 export function getParseCommand(plugin: NaturalLanguageDates, mode: string): void {
@@ -26,16 +26,19 @@ export function getParseCommand(plugin: NaturalLanguageDates, mode: string): voi
     return;
   }
 
-  //mode == "replace"
-  let newStr = `[[${date.formattedString}]]`;
+  let newStr;
 
-  if (mode == "link") {
+  if (mode == "replace") {
+    let alias = getDateLinkAlias(plugin, selectedText, false);
+    newStr = alias
+      ? `[[${date.formattedString}|${alias}]]`
+      : `[[${date.formattedString}]]`;
+  } else if (mode == "link") {
     newStr = `[${selectedText}](${date.formattedString})`;
   } else if (mode == "clean") {
     newStr = `${date.formattedString}`;
   } else if (mode == "time") {
     const time = plugin.parseTime(selectedText);
-
     newStr = `${time.formattedString}`;
   }
 
