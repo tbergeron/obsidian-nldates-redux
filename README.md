@@ -48,6 +48,10 @@ It's now possible to use the [Obsidian URI](https://publish.obsidian.md/help/Adv
 
 Opens the date picker menu
 
+#### Natural Language Dates: Open daily note using natural language
+
+Input a natural language date to open or create the daily note for the parsed date.
+
 #### Other Commands
 
 | Setting                                     | Description                                                                                                                                                                                                                                                                                                                                                                       | Default                       |
