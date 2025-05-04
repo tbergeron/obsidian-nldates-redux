@@ -153,6 +153,23 @@ export function generateMarkdownLink(app: App, subpath: string, alias?: string) 
   // return app.fileManager.generateMarkdownLink(file, "", undefined, alias);
 // }
 
+export function getDateLinkAlias(
+  plugin: { settings: { defaultAlias: string }, parseDate: (s: string) => { moment: moment.Moment } },
+  dateInput: string,
+  useSuggestionLabel: boolean
+): string | undefined {
+  if (useSuggestionLabel) {
+    return dateInput;
+  }
+  if (plugin.settings.defaultAlias) {
+    const parsed = plugin.parseDate(dateInput);
+    return parsed.moment.isValid()
+      ? parsed.moment.format(plugin.settings.defaultAlias)
+      : undefined;
+  }
+  return undefined;
+}
+
 export async function getOrCreateDailyNote(date: Moment): Promise<TFile | null> {
   // Borrowed from the Slated plugin:
   // https://github.com/tgrosinger/slated-obsidian/blob/main/src/vault.ts#L17
