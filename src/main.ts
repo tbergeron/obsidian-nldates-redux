@@ -11,6 +11,7 @@ import {
   getNowCommand,
 } from "./commands";
 import { getFormattedDate, getOrCreateDailyNote, parseTruthy } from "./utils";
+import { OpenDailyNoteModal } from "./modals/open-daily-note";
 
 export default class NaturalLanguageDates extends Plugin {
   private parser: NLDParser;
@@ -70,6 +71,15 @@ export default class NaturalLanguageDates extends Plugin {
         }
         new DatePickerModal(this.app, this).open();
       }
+    });
+
+    this.addCommand({
+      id: "nlp-open-daily-note",
+      name: "Open daily note using natural language",
+      callback: () => {
+        const modal = new OpenDailyNoteModal(this.app, this);
+        modal.open();
+      },
     });
 
     this.addSettingTab(new NLDSettingsTab(this.app, this));

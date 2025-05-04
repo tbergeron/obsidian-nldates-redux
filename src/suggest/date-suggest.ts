@@ -43,7 +43,10 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     return [{ label: context.query }];
   }
 
-  getDateSuggestions(context: EditorSuggestContext): IDateCompletion[] {
+  getDateSuggestions(
+    context: EditorSuggestContext | { query: string },
+    defaults: string[] = ["Now", "Today", "Yesterday", "Tomorrow", "In 1 hour", "1 hour ago"]
+  ): IDateCompletion[] {
     if (context.query.match(/^time/)) {
       return ["now", "+15 minutes", "+1 hour", "-15 minutes", "-1 hour"]
         .map((val) => ({ label: `time:${val}` }))
@@ -83,9 +86,9 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       ].filter((items) => items.label.toLowerCase().startsWith(context.query));
     }
 
-    return [{ label: "Now" }, { label: "Today" }, { label: "Yesterday" }, { label: "Tomorrow" }, { label: "In 1 hour"}, { label: "1 hour ago" }].filter(
-      (items) => items.label.toLowerCase().startsWith(context.query)
-    );
+    return defaults
+      .map((label) => ({ label }))
+      .filter((items) => items.label.toLowerCase().startsWith(context.query));
   }
 
   renderSuggestion(suggestion: IDateCompletion, el: HTMLElement): void {
