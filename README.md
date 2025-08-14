@@ -108,27 +108,6 @@ Unzip the [latest release](https://github.com/tbergeron/nldates-redux/releases/l
 
 ---
 
-## Current issues
-### Does not work on a task line when used with `obsidian-tasks`
-#### Problem
-As [reported here](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/2780), `obsidian-tasks` has a bug that sometimes prevents this plugin to display its autosuggestion popup when typing on "task lines" ie.
-```
-- [ ] It won't work on such line
-```
-#### Workaround
-Make sure you load this plugin **before** loading `obsidian-tasks` and everything will work properly.
-
-One way is make sure this plugin is listed **before** `obsidian-tasks` in `.obsidian/community-plugins.json`
-
-If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-tasks` to "Short Delay".
-
-#### Hallelujah! (2025-07-02)
-A kind individual worked on a fix that's just been merged in `obsidian-tasks`.
-It should be in a future release of `obsidian-tasks` soon and should fix this pesky problem.
-https://github.com/obsidian-tasks-group/obsidian-tasks/pull/3503
-
----
-
 # Credits
 
 This plugin was originally made by Argentina Ortega Sáinz (argenos) but seems to have been abandoned for the last 2+ years. I decided I'd start maintaining it and introduce features that I always wanted and were requested many times on the original repository.
