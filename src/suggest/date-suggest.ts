@@ -120,6 +120,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     editor.replaceRange(dateStr, this.context.start, this.context.end);
+    this.close();
   }
 
   onTrigger(
