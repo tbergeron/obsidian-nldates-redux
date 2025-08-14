@@ -96,7 +96,11 @@ The parser supports most date/time formats, including:
 
 ## How to install
 
-In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` and search for `Natural Language Dates`.
+### This plugin is still awaiting approval from the Obsidian team. It's been there since Feb 6 2025.
+You can show interest by bumping the issue here: https://github.com/obsidianmd/obsidian-releases/pull/5319
+Hopefully it will get merge, soon (tm)
+
+~In Obsidian go to `Settings > Third-party plugins > Community Plugins > Browse` and search for `Natural Language Dates`.~
 
 ### Manual installation
 
@@ -117,6 +121,11 @@ Make sure you load this plugin **before** loading `obsidian-tasks` and everythin
 One way is make sure this plugin is listed **before** `obsidian-tasks` in `.obsidian/community-plugins.json`
 
 If you use "Lazy Plugin Loader", set this plugin to "Instant" and set `obsidian-tasks` to "Short Delay".
+
+#### Hallelujah! (2025-07-02)
+A kind individual worked on a fix that's just been merged in `obsidian-tasks`.
+It should be in a future release of `obsidian-tasks` soon and should fix this pesky problem.
+https://github.com/obsidian-tasks-group/obsidian-tasks/pull/3503
 
 ---
 
