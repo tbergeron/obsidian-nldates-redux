@@ -154,10 +154,17 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       return null;
     }
 
+    const query = editor.getRange(startPos, cursor).substring(triggerPhrase.length);
+    
+    // Dismiss suggestions if user types a space right after the trigger phrase
+    if (query === " ") {
+      return null;
+    }
+
     return {
       start: startPos,
       end: cursor,
-      query: editor.getRange(startPos, cursor).substring(triggerPhrase.length),
+      query: query,
     };
   }
 }
