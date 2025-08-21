@@ -130,8 +130,11 @@ export default class NaturalLanguageDates extends Plugin {
   parseDate(dateString: string): NLDResult {
     let format = this.settings.format;
     if (this.settings.appendTimeToDateWhenRelated) {
-      // assume it's date time if it contains:
-      if (dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi)) {
+      // assume it's date time if it contains time keywords or time patterns:
+      const hasTimeKeywords = dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi);
+      const hasTimePattern = dateString.match(/\b\d{1,2}(?::\d{2})?(?:\s*(?:am|pm|AM|PM))\b|\b\d{1,2}:\d{2}\b/);
+      
+      if (hasTimeKeywords || hasTimePattern) {
         // but make an exception and assume it's only date if it contains:
         if (!dateString.match(/\bdays?\b|\bmonths?\b|\byears?\b|\bweeks?\b/gi)) {
           format += this.settings.separator + this.settings.timeFormat;
