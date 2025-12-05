@@ -29,7 +29,7 @@ export function getParseCommand(plugin: NaturalLanguageDates, mode: string): voi
   let newStr;
 
   if (mode == "replace") {
-    let alias = getDateLinkAlias(plugin, selectedText, false);
+    const alias = getDateLinkAlias(plugin, selectedText, false);
     newStr = alias
       ? `[[${date.formattedString}|${alias}]]`
       : `[[${date.formattedString}]]`;

@@ -83,7 +83,10 @@ export default class NaturalLanguageDates extends Plugin {
     });
 
     this.addSettingTab(new NLDSettingsTab(this.app, this));
-    this.registerObsidianProtocolHandler("nldates", this.actionHandler.bind(this));
+    this.registerObsidianProtocolHandler(
+      "nldates",
+      (params) => void this.actionHandler(params)
+    );
     this.registerEditorSuggest(new DateSuggest(this.app, this));
 
     this.app.workspace.onLayoutReady(() => {
@@ -93,11 +96,15 @@ export default class NaturalLanguageDates extends Plugin {
   }
 
   onunload(): void {
-    console.log("Unloading natural language date parser plugin");
+    console.debug("Unloading natural language date parser plugin");
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign(
+      {},
+      DEFAULT_SETTINGS,
+      (await this.loadData()) as Partial<NLDSettings>
+    );
   }
 
   async saveSettings(): Promise<void> {
@@ -156,7 +163,7 @@ export default class NaturalLanguageDates extends Plugin {
 
     if (date.moment.isValid()) {
       const dailyNote = await getOrCreateDailyNote(date.moment);
-      workspace.getLeaf(newPane).openFile(dailyNote);
+      await workspace.getLeaf(newPane).openFile(dailyNote);
     }
   }
 }

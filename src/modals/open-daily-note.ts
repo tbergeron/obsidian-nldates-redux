@@ -25,7 +25,7 @@ export class OpenDailyNoteModal extends SuggestModal<string> {
     el.createEl("div", { text: suggestion });
   }
 
-  async onChooseSuggestion(suggestion: string) {
+  onChooseSuggestion(suggestion: string): void {
     const parsedDate = this.plugin.parseDate(suggestion);
     const date = parsedDate.moment;
     if (!parsedDate.date || !date.isValid()) {
@@ -33,7 +33,8 @@ export class OpenDailyNoteModal extends SuggestModal<string> {
       return;
     }
 
-    const note = await getOrCreateDailyNote(date);
-    this.app.workspace.getLeaf().openFile(note);
+    void getOrCreateDailyNote(date).then((note) => {
+      void this.app.workspace.getLeaf().openFile(note);
+    });
   }
 }

@@ -23,7 +23,8 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     this.plugin = plugin;
 
     this.scope.register(["Shift"], "Enter", (evt: KeyboardEvent) => {
-      // @ts-ignore
+      // @ts-expect-error - suggestions is private API
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       this.suggestions.useSelectedItem(evt);
       return false;
     });

@@ -1,4 +1,5 @@
 import chrono, { Chrono, Parser } from "chrono-node";
+ 
 import type { Moment } from "moment";
 
 import { DayOfWeek } from "./settings";
@@ -84,11 +85,11 @@ export default class NLDParser {
       : new Date();
 
     if (thisDateMatch && thisDateMatch[1] === "week") {
-      return parser.parseDate(`this ${weekStart}`, referenceDate);
+      return parser.parseDate(`this ${String(weekStart)}`, referenceDate);
     }
 
     if (nextDateMatch && nextDateMatch[1] === "week") {
-      return parser.parseDate(`next ${weekStart}`, referenceDate, {
+      return parser.parseDate(`next ${String(weekStart)}`, referenceDate, {
         forwardDate: true,
       });
     }

@@ -1,4 +1,5 @@
-import { Moment } from "moment";
+ 
+import type { Moment } from "moment";
 import { App, Editor, EditorRange, EditorPosition, normalizePath, TFile } from "obsidian";
 import {
   createDailyNote,
@@ -81,22 +82,15 @@ export function getWeekNumber(dayOfWeek: Omit<DayOfWeek, "locale-default">): num
 }
 
 export function getLocaleWeekStart(): Omit<DayOfWeek, "locale-default"> {
-  // @ts-ignore
-  const startOfWeek = window.moment.localeData()._week.dow;
+  // @ts-expect-error - _week is private moment API
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const startOfWeek: number = window.moment.localeData()._week.dow;
   return daysOfWeek[startOfWeek];
 }
 
-declare module 'obsidian' {
-  interface Vault {
-    getConfig(configName: string): boolean;
-  }
-  interface App {
-    vault: Vault;
-  }
-}
-
 export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
-  const useMarkdownLinks = app.vault.getConfig("useMarkdownLinks");
+  // getConfig is an undocumented Obsidian API
+  const useMarkdownLinks = (app.vault as unknown as { getConfig(key: string): boolean }).getConfig("useMarkdownLinks");
   const path = normalizePath(subpath);
 
   if (useMarkdownLinks) {
@@ -190,7 +184,7 @@ function extractTerms(dictionary: DictionaryLike): string[] {
   if (dictionary instanceof Array) {
     keys = [...dictionary];
   } else if (dictionary instanceof Map) {
-    keys = Array.from((dictionary as Map<string, unknown>).keys());
+    keys = Array.from(dictionary.keys());
   } else {
     keys = Object.keys(dictionary);
   }

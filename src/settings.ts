@@ -75,6 +75,7 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Date format")
+      // eslint-disable-next-line obsidianmd/ui/sentence-case -- Format string example
       .setDesc("Specify the format for displaying dates (default: YYYY-MM-DD)")
       .addMomentFormat((text) =>
         text
@@ -88,6 +89,7 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Time format")
+      // eslint-disable-next-line obsidianmd/ui/sentence-case -- Format string example
       .setDesc("Specify the format for displaying time (default: HH:mm)")
       .addMomentFormat((text) =>
         text
@@ -115,7 +117,8 @@ export class NLDSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("Append time to date when relevant")
       .setDesc(
-        `Enable Notion-like behavior. ie. @now includes date and time, while @today includes only the date. If disabled, the plugin will behave like the original version and will use the date format *only* and time format will only be used for commands.`
+        // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Notion" is a proper noun
+        `Enable Notion-like behavior. i.e. @now includes date and time, while @today includes only the date. If disabled, the plugin will behave like the original version and will use the date format *only* and time format will only be used for commands.`
       )
       .addToggle((toggle) =>
         toggle
@@ -130,7 +133,7 @@ export class NLDSettingsTab extends PluginSettingTab {
       .setName("Week starts on")
       .setDesc("Select the day to be considered as the start of the week")
       .addDropdown((dropdown) => {
-        dropdown.addOption("locale-default", `Locale default (${localeWeekStart})`);
+        dropdown.addOption("locale-default", `Locale default (${String(localeWeekStart)})`);
         localizedWeekdays.forEach((day, i) => {
           dropdown.addOption(weekdays[i], day);
         });
@@ -189,6 +192,7 @@ export class NLDSettingsTab extends PluginSettingTab {
     .setDesc("Specify a time format as the default alias when creating wikilink dates. (default: none)")
     .addText((text) =>
       text
+        // eslint-disable-next-line obsidianmd/ui/sentence-case -- Moment.js format string
         .setPlaceholder("dddd, MMMM Do YYYY")
         .setValue(this.plugin.settings.defaultAlias)
         .onChange(async (value) => {
