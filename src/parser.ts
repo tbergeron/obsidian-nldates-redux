@@ -1,6 +1,6 @@
 import chrono, { Chrono, Parser } from "chrono-node";
- 
-import type { Moment } from "moment";
+
+import { moment } from "obsidian";
 
 import { DayOfWeek } from "./settings";
 import {
@@ -14,7 +14,7 @@ import {
 export interface NLDResult {
   formattedString: string;
   date: Date;
-  moment: Moment;
+  moment: moment.Moment;
 }
 
 function getLocalizedChrono(): Chrono {

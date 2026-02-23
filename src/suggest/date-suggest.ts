@@ -23,8 +23,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     this.plugin = plugin;
 
     this.scope.register(["Shift"], "Enter", (evt: KeyboardEvent) => {
-      // @ts-expect-error - suggestions is private API
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // @ts-expect-error suggestions is a private Obsidian API not included in type definitions
       this.suggestions.useSelectedItem(evt);
       return false;
     });
@@ -156,7 +155,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
     }
 
     const query = editor.getRange(startPos, cursor).substring(triggerPhrase.length);
-    
+
     // Dismiss suggestions if user types a space right after the trigger phrase
     if (query === " ") {
       return null;

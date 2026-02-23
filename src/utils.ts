@@ -1,6 +1,5 @@
- 
-import type { Moment } from "moment";
-import { App, Editor, EditorRange, EditorPosition, normalizePath, TFile } from "obsidian";
+
+import { App, Editor, EditorRange, EditorPosition, normalizePath, TFile, moment } from "obsidian";
 import {
   createDailyNote,
   getAllDailyNotes,
@@ -32,14 +31,14 @@ declare module 'obsidian' {
 export default function getWordBoundaries(editor: Editor): EditorRange {
   const cursor = editor.getCursor();
 
-    const pos = editor.posToOffset(cursor);
-    const word = editor.cm.state.wordAt(pos);
-    const wordStart = editor.offsetToPos(word.from);
-    const wordEnd = editor.offsetToPos(word.to);
-    return {
-      from: wordStart,
-      to: wordEnd,
-    };
+  const pos = editor.posToOffset(cursor);
+  const word = editor.cm.state.wordAt(pos);
+  const wordStart = editor.offsetToPos(word.from);
+  const wordEnd = editor.offsetToPos(word.to);
+  return {
+    from: wordStart,
+    to: wordEnd,
+  };
 }
 
 export function getSelectedText(editor: Editor): string {
@@ -82,8 +81,7 @@ export function getWeekNumber(dayOfWeek: Omit<DayOfWeek, "locale-default">): num
 }
 
 export function getLocaleWeekStart(): Omit<DayOfWeek, "locale-default"> {
-  // @ts-expect-error - _week is private moment API
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  // @ts-expect-error _week is a private moment API not included in type definitions
   const startOfWeek: number = window.moment.localeData()._week.dow;
   return daysOfWeek[startOfWeek];
 }
@@ -109,42 +107,42 @@ export function generateMarkdownLink(app: App, subpath: string, alias?: string) 
 }
 
 // export function generateMarkdownLink(app: App, path: string, alias?: string) {
-  // NOTE: did not work because getAbstractFileByPath cannot be used with non-existing files?
-  // const file = app.vault.getAbstractFileByPath(path) as TFile;
+// NOTE: did not work because getAbstractFileByPath cannot be used with non-existing files?
+// const file = app.vault.getAbstractFileByPath(path) as TFile;
 
-  // Also generateMarkdownLink on its own gives me:
-  // Uncaught TypeError: Cannot read properties of null (reading 'extension')
-  // at t.fileToLinktext (app.js:1:1921765)
-  // at e.generateMarkdownLink (app.js:1:1269853)
-  // at z (VM636 plugin:nldates-redux:1:12260)
-  // at oc.selectSuggestion (VM636 plugin:nldates-redux:1:147447)
-  // at e.useSelectedItem (app.js:1:1378395)
-  // at Object.func (app.js:1:1375793)
-  // at e.handleKey (app.js:1:773824)
-  // at e.onKeyEvent (app.js:1:775080)
+// Also generateMarkdownLink on its own gives me:
+// Uncaught TypeError: Cannot read properties of null (reading 'extension')
+// at t.fileToLinktext (app.js:1:1921765)
+// at e.generateMarkdownLink (app.js:1:1269853)
+// at z (VM636 plugin:nldates-redux:1:12260)
+// at oc.selectSuggestion (VM636 plugin:nldates-redux:1:147447)
+// at e.useSelectedItem (app.js:1:1378395)
+// at Object.func (app.js:1:1375793)
+// at e.handleKey (app.js:1:773824)
+// at e.onKeyEvent (app.js:1:775080)
 
-  // NOTE: Also tried:
-  // const file = new TFile();
-  // file.basename = path.replace(/.*\/(.*)\.md/, "$1");
-  // file.extension = "md";
-  // file.name = `${file.basename}.md`;
-  // file.path = path;
-  // file.vault = app.vault;
+// NOTE: Also tried:
+// const file = new TFile();
+// file.basename = path.replace(/.*\/(.*)\.md/, "$1");
+// file.extension = "md";
+// file.name = `${file.basename}.md`;
+// file.path = path;
+// file.vault = app.vault;
 
-  // did not work because it gave me:
-  // Uncaught TypeError: Cannot read properties of undefined (reading 'lastIndexOf')
-  // at Kc (app.js:1:542123)
-  // at e.setPath (app.js:1:742897)
-  // at t.setPath (app.js:1:743237)
-  // at t.e (app.js:1:742825)
-  // at new t (app.js:1:743117)
-  // at z (plugin:nldates-redux:1:12206)
-  // at oc.selectSuggestion (plugin:nldates-redux:1:147536)
-  // at e.useSelectedItem (app.js:1:1378395)
-  // at Object.func (app.js:1:1375793)
-  // at e.handleKey (app.js:1:773824)
+// did not work because it gave me:
+// Uncaught TypeError: Cannot read properties of undefined (reading 'lastIndexOf')
+// at Kc (app.js:1:542123)
+// at e.setPath (app.js:1:742897)
+// at t.setPath (app.js:1:743237)
+// at t.e (app.js:1:742825)
+// at new t (app.js:1:743117)
+// at z (plugin:nldates-redux:1:12206)
+// at oc.selectSuggestion (plugin:nldates-redux:1:147536)
+// at e.useSelectedItem (app.js:1:1378395)
+// at Object.func (app.js:1:1375793)
+// at e.handleKey (app.js:1:773824)
 
-  // return app.fileManager.generateMarkdownLink(file, "", undefined, alias);
+// return app.fileManager.generateMarkdownLink(file, "", undefined, alias);
 // }
 
 export function getDateLinkAlias(
@@ -164,7 +162,7 @@ export function getDateLinkAlias(
   return undefined;
 }
 
-export async function getOrCreateDailyNote(date: Moment): Promise<TFile | null> {
+export async function getOrCreateDailyNote(date: moment.Moment): Promise<TFile | null> {
   // Borrowed from the Slated plugin:
   // https://github.com/tgrosinger/slated-obsidian/blob/main/src/vault.ts#L17
   const desiredNote = getDailyNote(date, getAllDailyNotes());

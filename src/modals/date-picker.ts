@@ -63,7 +63,6 @@ export default class DatePickerModal extends Modal {
         .setName("Date format")
         .setDesc("Moment format to be used")
         .addMomentFormat((momentEl) => {
-          // eslint-disable-next-line obsidianmd/ui/sentence-case -- Moment.js format string
           momentEl.setPlaceholder("YYYY-MM-DD HH:mm");
           momentEl.setValue(momentFormat);
           momentEl.onChange((value) => {

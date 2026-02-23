@@ -75,7 +75,6 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Date format")
-      // eslint-disable-next-line obsidianmd/ui/sentence-case -- Format string example
       .setDesc("Specify the format for displaying dates (default: YYYY-MM-DD)")
       .addMomentFormat((text) =>
         text
@@ -89,7 +88,6 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Time format")
-      // eslint-disable-next-line obsidianmd/ui/sentence-case -- Format string example
       .setDesc("Specify the format for displaying time (default: HH:mm)")
       .addMomentFormat((text) =>
         text
@@ -117,7 +115,6 @@ export class NLDSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("Append time to date when relevant")
       .setDesc(
-        // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Notion" is a proper noun
         `Enable Notion-like behavior. i.e. @now includes date and time, while @today includes only the date. If disabled, the plugin will behave like the original version and will use the date format *only* and time format will only be used for commands.`
       )
       .addToggle((toggle) =>
@@ -188,17 +185,16 @@ export class NLDSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-    .setName("Default alias for links")
-    .setDesc("Specify a time format as the default alias when creating wikilink dates. (default: none)")
-    .addText((text) =>
-      text
-        // eslint-disable-next-line obsidianmd/ui/sentence-case -- Moment.js format string
-        .setPlaceholder("dddd, MMMM Do YYYY")
-        .setValue(this.plugin.settings.defaultAlias)
-        .onChange(async (value) => {
-          this.plugin.settings.defaultAlias = value || "";
-          await this.plugin.saveSettings();
-        })
-    );
+      .setName("Default alias for links")
+      .setDesc("Specify a time format as the default alias when creating wikilink dates. (default: none)")
+      .addText((text) =>
+        text
+          .setPlaceholder("dddd, MMMM Do YYYY")
+          .setValue(this.plugin.settings.defaultAlias)
+          .onChange(async (value) => {
+            this.plugin.settings.defaultAlias = value || "";
+            await this.plugin.saveSettings();
+          })
+      );
   }
 }
