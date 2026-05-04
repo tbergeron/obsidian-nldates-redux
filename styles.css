@@ -118,16 +118,6 @@
   font-weight: 700;
 }
 
-.nld-cal-selected > span {
-  background-color: var(--text-normal);
-  color: var(--background-primary);
-  font-weight: 600;
-}
-
-.nld-cal-selected:hover > span {
-  opacity: 0.85;
-}
-
 /* ── Month view ── */
 .nld-cal-month-grid {
   display: grid;

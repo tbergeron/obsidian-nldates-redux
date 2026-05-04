@@ -100,7 +100,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
   renderSuggestion(suggestion: IDateCompletion, el: HTMLElement): void {
     if (suggestion.isCalendarTrigger) {
       el.addClass("nld-suggest-calendar");
-      el.createEl("span", { text: "📅 ", cls: "nld-suggest-calendar-icon" });
+      el.createEl("span", { text: "📅 " });
       el.createEl("span", { text: suggestion.label });
     } else {
       el.setText(suggestion.label);

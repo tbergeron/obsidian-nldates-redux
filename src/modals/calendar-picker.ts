@@ -7,7 +7,6 @@ type CalendarView = "day" | "month";
 export default class CalendarPickerModal extends Modal {
   private plugin: NaturalLanguageDates;
   private viewDate: Date;
-  private selectedDate: Date | null = null;
   private currentView: CalendarView = "day";
   private onSelect: (date: Date) => void;
 
@@ -34,14 +33,6 @@ export default class CalendarPickerModal extends Modal {
       return window.moment.localeData()._week.dow;
     }
     return getWeekNumber(weekStart);
-  }
-
-  private isSameDay(a: Date, b: Date): boolean {
-    return (
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate()
-    );
   }
 
   private render(): void {
@@ -119,13 +110,11 @@ export default class CalendarPickerModal extends Modal {
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const isToday = this.isSameDay(date, today);
-      const isSelected = this.selectedDate && this.isSameDay(date, this.selectedDate);
+      const isToday =
+        day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 
       const cls = ["nld-cal-day"];
-      if (isSelected) cls.push("nld-cal-selected");
-      else if (isToday) cls.push("nld-cal-today");
+      if (isToday) cls.push("nld-cal-today");
 
       const dayEl = grid.createEl("button", {
         cls: cls.join(" "),
@@ -134,8 +123,7 @@ export default class CalendarPickerModal extends Modal {
       dayEl.createEl("span", { text: String(day) });
 
       dayEl.addEventListener("click", () => {
-        this.selectedDate = date;
-        this.onSelect(date);
+        this.onSelect(new Date(year, month, day));
         this.close();
       });
     }
