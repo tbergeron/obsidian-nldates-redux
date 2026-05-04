@@ -1,0 +1,165 @@
+/* ── Modal container ── */
+.nld-calendar-modal {
+  width: fit-content !important;
+}
+
+.nld-calendar-modal .modal-content {
+  padding: 12px;
+  width: 260px;
+}
+
+/* Targeted reset — only clear what themes override, preserve layout */
+.nld-calendar-modal button {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* ── Header ── */
+.nld-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.nld-cal-nav {
+  color: var(--text-muted);
+  font-size: 1.1em;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-s);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nld-cal-nav:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.nld-cal-title-btn {
+  font-weight: 600;
+  font-size: 0.88em;
+  color: var(--text-normal);
+  padding: 4px 6px;
+  border-radius: var(--radius-s);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nld-cal-title-btn:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+.nld-cal-chevron {
+  font-size: 0.8em;
+  color: var(--text-muted);
+}
+
+.nld-cal-title-plain {
+  font-weight: 600;
+  font-size: 0.88em;
+  color: var(--text-normal);
+}
+
+/* ── Day view ── */
+.nld-cal-weekdays,
+.nld-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.nld-cal-weekday {
+  text-align: center;
+  font-size: 0.68em;
+  color: var(--text-faint);
+  padding-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.nld-cal-day {
+  color: var(--text-normal);
+  font-size: 0.85em;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nld-cal-day > span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nld-cal-day:hover > span {
+  background-color: var(--background-modifier-hover);
+}
+
+.nld-cal-today > span {
+  color: var(--interactive-accent);
+  font-weight: 700;
+}
+
+.nld-cal-selected > span {
+  background-color: var(--text-normal);
+  color: var(--background-primary);
+  font-weight: 600;
+}
+
+.nld-cal-selected:hover > span {
+  opacity: 0.85;
+}
+
+/* ── Month view ── */
+.nld-cal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.nld-cal-month-cell {
+  font-size: 0.85em;
+  color: var(--text-normal);
+  padding: 8px 0;
+  border-radius: var(--radius-s);
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.nld-cal-month-cell:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+.nld-cal-month-current {
+  background-color: var(--text-normal);
+  color: var(--background-primary);
+  font-weight: 600;
+  border-radius: var(--radius-s);
+}
+
+/* ── Suggest entry ── */
+.nld-suggest-calendar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
