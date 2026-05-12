@@ -61,9 +61,9 @@ export default class DatePickerModal extends Modal {
 
       new Setting(formEl)
         .setName("Date format")
-        .setDesc("Moment format to be used")
+        .setDesc("Moment format to be used.")
         .addMomentFormat((momentEl) => {
-          momentEl.setPlaceholder("YYYY-MM-DD HH:mm");
+          momentEl.setPlaceholder("Enter a moment format");
           momentEl.setValue(momentFormat);
           momentEl.onChange((value) => {
             momentFormat = value.trim() || "YYYY-MM-DD HH:mm";

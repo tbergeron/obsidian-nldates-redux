@@ -75,7 +75,7 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Date format")
-      .setDesc("Specify the format for displaying dates (default: YYYY-MM-DD)")
+      .setDesc("Specify the format for displaying dates.")
       .addMomentFormat((text) =>
         text
           .setDefaultFormat("YYYY-MM-DD")
@@ -88,7 +88,7 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Time format")
-      .setDesc("Specify the format for displaying time (default: HH:mm)")
+      .setDesc("Specify the format for displaying time.")
       .addMomentFormat((text) =>
         text
           .setDefaultFormat("HH:mm")
@@ -115,7 +115,7 @@ export class NLDSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("Append time to date when relevant")
       .setDesc(
-        `Enable Notion-like behavior. i.e. @now includes date and time, while @today includes only the date. If disabled, the plugin will behave like the original version and will use the date format *only* and time format will only be used for commands.`
+        "When enabled, typing @now will insert both date and time, while @today will insert only the date. When disabled, only the date format is used."
       )
       .addToggle((toggle) =>
         toggle
@@ -186,10 +186,10 @@ export class NLDSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Default alias for links")
-      .setDesc("Specify a time format as the default alias when creating wikilink dates. (default: none)")
+      .setDesc("Specify a time format as the default alias when creating wikilink dates.")
       .addText((text) =>
         text
-          .setPlaceholder("dddd, MMMM Do YYYY")
+          .setPlaceholder("Enter an alias format")
           .setValue(this.plugin.settings.defaultAlias)
           .onChange(async (value) => {
             this.plugin.settings.defaultAlias = value || "";
