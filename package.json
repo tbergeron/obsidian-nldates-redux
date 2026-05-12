@@ -15,7 +15,7 @@
   "dependencies": {
     "@codemirror/state": "6.5.0",
     "@codemirror/view": "6.38.6",
-    "chrono-node": "github:liamcain/chrono",
+    "chrono-node": "2.3.6",
     "obsidian": "latest"
   },
   "devDependencies": {
