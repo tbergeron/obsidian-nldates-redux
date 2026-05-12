@@ -4,7 +4,7 @@ import {
   createDailyNote,
   getAllDailyNotes,
   getDailyNote,
-} from "obsidian-daily-notes-interface";
+} from "./daily-notes";
 
 import { DayOfWeek } from "./settings";
 
