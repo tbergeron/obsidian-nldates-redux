@@ -13,5 +13,4 @@ main.js
 .DS_Store
 
 # Lock files
-package-lock.json
 yarn.lock
