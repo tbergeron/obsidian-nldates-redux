@@ -1,4 +1,4 @@
-# nldates-redux
+# Natural Language Dates Redux
 
 Insert timestamps and cross-link your notes with the flexibility of natural language. Based on `argenos/nldates-obsidian`.
 
