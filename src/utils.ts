@@ -82,6 +82,7 @@ export function getWeekNumber(dayOfWeek: Omit<DayOfWeek, "locale-default">): num
 
 export function getLocaleWeekStart(): Omit<DayOfWeek, "locale-default"> {
   // @ts-expect-error _week is a private moment API not included in type definitions
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
   const startOfWeek: number = window.moment.localeData()._week.dow;
   return daysOfWeek[startOfWeek];
 }

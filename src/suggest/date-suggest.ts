@@ -24,6 +24,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
 
     this.scope.register(["Shift"], "Enter", (evt: KeyboardEvent) => {
       // @ts-expect-error suggestions is a private Obsidian API not included in type definitions
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       this.suggestions.useSelectedItem(evt);
       return false;
     });

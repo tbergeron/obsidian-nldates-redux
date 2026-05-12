@@ -1,4 +1,4 @@
-import chrono, { Chrono, Parser } from "chrono-node";
+import chrono, { Chrono } from "chrono-node";
 
 import { moment } from "obsidian";
 
@@ -50,7 +50,7 @@ function getConfiguredChrono(): Chrono {
         month: window.moment().month(),
       };
     },
-  } as Parser);
+  });
   return localizedChrono;
 }
 
