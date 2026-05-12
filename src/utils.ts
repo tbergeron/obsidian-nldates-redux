@@ -33,6 +33,9 @@ export default function getWordBoundaries(editor: Editor): EditorRange {
 
   const pos = editor.posToOffset(cursor);
   const word = editor.cm.state.wordAt(pos);
+  if (!word) {
+    return { from: cursor, to: cursor };
+  }
   const wordStart = editor.offsetToPos(word.from);
   const wordEnd = editor.offsetToPos(word.to);
   return {
@@ -83,7 +86,7 @@ export function getWeekNumber(dayOfWeek: Omit<DayOfWeek, "locale-default">): num
 export function getLocaleWeekStart(): Omit<DayOfWeek, "locale-default"> {
   const localeData = window.moment.localeData() as unknown as { _week: { dow: number } };
   const startOfWeek: number = localeData._week.dow;
-  return daysOfWeek[startOfWeek];
+  return daysOfWeek[startOfWeek] ?? "sunday";
 }
 
 export function generateMarkdownLink(app: App, subpath: string, alias?: string) {
@@ -248,8 +251,9 @@ export const ORDINAL_NUMBER_PATTERN = `(?:${matchAnyPattern(
 
 export function parseOrdinalNumberPattern(match: string): number {
   let num = match.toLowerCase();
-  if (ORDINAL_WORD_DICTIONARY[num] !== undefined) {
-    return ORDINAL_WORD_DICTIONARY[num];
+  const ordinalValue = ORDINAL_WORD_DICTIONARY[num];
+  if (ordinalValue !== undefined) {
+    return ordinalValue;
   }
 
   num = num.replace(/(?:st|nd|rd|th)$/i, "");

@@ -95,6 +95,9 @@ export default class DatePickerModal extends Modal {
       });
 
       const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+      if (!activeView) {
+        return;
+      }
       const activeEditor = activeView.editor;
       formEl.addEventListener("submit", (e: Event) => {
         e.preventDefault();

@@ -51,22 +51,25 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
         .map((val) => ({ label: `time:${val}` }))
         .filter((item) => item.label.toLowerCase().startsWith(context.query));
     }
-    if (context.query.match(/(next|last|this)/i)) {
-      const reference = context.query.match(/(next|last|this)/i)[1];
-      return [
-        "week",
-        "month",
-        "year",
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ]
-        .map((val) => ({ label: `${reference} ${val}` }))
-        .filter((items) => items.label.toLowerCase().startsWith(context.query));
+    const relativeMatch = context.query.match(/(next|last|this)/i);
+    if (relativeMatch) {
+      const reference = relativeMatch[1];
+      if (reference) {
+        return [
+          "week",
+          "month",
+          "year",
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ]
+          .map((val) => ({ label: `${reference} ${val}` }))
+          .filter((items) => items.label.toLowerCase().startsWith(context.query));
+      }
     }
 
     const relativeDate =
@@ -95,6 +98,9 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
   }
 
   selectSuggestion(suggestion: IDateCompletion, event: KeyboardEvent | MouseEvent): void {
+    if (!this.context) {
+      return;
+    }
     const { editor } = this.context;
 
     const includeAlias = event.shiftKey;
@@ -125,7 +131,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
   onTrigger(
     cursor: EditorPosition,
     editor: Editor
-  ): EditorSuggestTriggerInfo {
+  ): EditorSuggestTriggerInfo | null {
     if (!this.plugin.settings.isAutosuggestEnabled) {
       return null;
     }

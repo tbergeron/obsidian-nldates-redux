@@ -34,7 +34,9 @@ export class OpenDailyNoteModal extends SuggestModal<string> {
     }
 
     void getOrCreateDailyNote(date).then((note) => {
-      void this.app.workspace.getLeaf().openFile(note);
+      if (note) {
+        void this.app.workspace.getLeaf().openFile(note);
+      }
     });
   }
 }

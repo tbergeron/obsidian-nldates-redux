@@ -132,7 +132,10 @@ export class NLDSettingsTab extends PluginSettingTab {
       .addDropdown((dropdown) => {
         dropdown.addOption("locale-default", `Locale default (${String(localeWeekStart)})`);
         localizedWeekdays.forEach((day, i) => {
-          dropdown.addOption(weekdays[i], day);
+          const weekday = weekdays[i];
+          if (weekday) {
+            dropdown.addOption(weekday, day);
+          }
         });
         dropdown.setValue(this.plugin.settings.weekStart.toLowerCase());
         dropdown.onChange(async (value: DayOfWeek) => {

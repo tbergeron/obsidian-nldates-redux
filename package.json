@@ -3,8 +3,9 @@
   "version": "0.8.17",
   "description": "Plugin to parse natural language dates in Obsidian",
   "main": "main.js",
+  "type": "module",
   "scripts": {
-    "lint": "eslint src/",
+    "lint": "eslint .",
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js"
   },
@@ -17,21 +18,22 @@
     "obsidian-daily-notes-interface": "0.9.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "9.30.1",
     "@rollup/plugin-commonjs": "21.0.1",
     "@rollup/plugin-node-resolve": "13.0.6",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/estree": "^1.0.6",
     "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-obsidianmd": "^0.1.9",
+    "@eslint/json": "0.14.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-obsidianmd": "0.1.9",
+    "globals": "14.0.0",
+    "jiti": "2.6.1",
     "prettier": "2.4.1",
     "rollup": "^2.60.0",
     "tslib": "2.4.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.1"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "8.35.1"
   }
 }

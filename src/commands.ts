@@ -26,7 +26,7 @@ export function getParseCommand(plugin: NaturalLanguageDates, mode: string): voi
     return;
   }
 
-  let newStr;
+  let newStr: string;
 
   if (mode == "replace") {
     const alias = getDateLinkAlias(plugin, selectedText, false);
@@ -40,6 +40,8 @@ export function getParseCommand(plugin: NaturalLanguageDates, mode: string): voi
   } else if (mode == "time") {
     const time = plugin.parseTime(selectedText);
     newStr = `${time.formattedString}`;
+  } else {
+    newStr = selectedText;
   }
 
   editor.replaceSelection(newStr);

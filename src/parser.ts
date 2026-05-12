@@ -85,50 +85,57 @@ export default class NLDParser {
       : new Date();
 
     if (thisDateMatch && thisDateMatch[1] === "week") {
-      return parser.parseDate(`this ${String(weekStart)}`, referenceDate);
+      return parser.parseDate(`this ${String(weekStart)}`, referenceDate) ?? referenceDate;
     }
 
     if (nextDateMatch && nextDateMatch[1] === "week") {
       return parser.parseDate(`next ${String(weekStart)}`, referenceDate, {
         forwardDate: true,
-      });
+      }) ?? referenceDate;
     }
 
     if (nextDateMatch && nextDateMatch[1] === "month") {
       const thisMonth = parser.parseDate("this month", new Date(), {
         forwardDate: true,
-      });
+      }) ?? new Date();
       return parser.parseDate(selectedText, thisMonth, {
         forwardDate: true,
-      });
+      }) ?? thisMonth;
     }
 
     if (nextDateMatch && nextDateMatch[1] === "year") {
       const thisYear = parser.parseDate("this year", new Date(), {
         forwardDate: true,
-      });
+      }) ?? new Date();
       return parser.parseDate(selectedText, thisYear, {
         forwardDate: true,
-      });
+      }) ?? thisYear;
     }
 
-    if (lastDayOfMatch) {
+    if (lastDayOfMatch && lastDayOfMatch[2]) {
       const tempDate = parser.parse(lastDayOfMatch[2]);
-      const year = tempDate[0].start.get("year");
-      const month = tempDate[0].start.get("month");
+      const parsedResult = tempDate[0];
+      if (!parsedResult) {
+        return parser.parseDate(selectedText, referenceDate, { locale }) ?? referenceDate;
+      }
+      const year = parsedResult.start.get("year");
+      const month = parsedResult.start.get("month");
+      if (year === null || month === null) {
+        return parser.parseDate(selectedText, referenceDate, { locale }) ?? referenceDate;
+      }
       const lastDay = getLastDayOfMonth(year, month);
 
       return parser.parseDate(`${year}-${month}-${lastDay}`, new Date(), {
         forwardDate: true,
-      });
+      }) ?? referenceDate;
     }
 
     if (midOf) {
       return parser.parseDate(`${midOf[1]} 15th`, new Date(), {
         forwardDate: true,
-      });
+      }) ?? new Date();
     }
 
-    return parser.parseDate(selectedText, referenceDate, { locale });
+    return parser.parseDate(selectedText, referenceDate, { locale }) ?? referenceDate;
   }
 }

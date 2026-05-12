@@ -70,6 +70,7 @@ export default class NaturalLanguageDates extends Plugin {
           return !!this.app.workspace.getActiveViewOfType(MarkdownView);
         }
         new DatePickerModal(this.app, this).open();
+        return true;
       }
     });
 
@@ -158,12 +159,15 @@ export default class NaturalLanguageDates extends Plugin {
   async actionHandler(params: ObsidianProtocolData): Promise<void> {
     const { workspace } = this.app;
 
-    const date = this.parseDate(params.day);
+    const dayParam = params.day || "";
+    const date = this.parseDate(dayParam);
     const newPane = parseTruthy(params.newPane || "yes");
 
     if (date.moment.isValid()) {
       const dailyNote = await getOrCreateDailyNote(date.moment);
-      await workspace.getLeaf(newPane).openFile(dailyNote);
+      if (dailyNote) {
+        await workspace.getLeaf(newPane).openFile(dailyNote);
+      }
     }
   }
 }
