@@ -1,10 +1,6 @@
 
 import { App, Editor, EditorRange, EditorPosition, normalizePath, TFile, moment } from "obsidian";
-import {
-  createDailyNote,
-  getAllDailyNotes,
-  getDailyNote,
-} from "obsidian-daily-notes-interface";
+import { createDailyNote, getAllDailyNotes, getDailyNote } from "./daily-notes";
 
 import { DayOfWeek } from "./settings";
 
