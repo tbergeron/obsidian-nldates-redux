@@ -31,5 +31,6 @@ export default tseslint.config(
 		"versions.json",
 		"main.js",
 		"scripts/issue-analyzer.mjs",
+		"scripts/pr-analyzer.mjs",
 	]),
 );
