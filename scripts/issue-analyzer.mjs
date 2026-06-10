@@ -76,7 +76,8 @@ const EMAIL_TO =
 const ANALYZE_ENDPOINT =
   "https://opencode.ai/zen/go/v1/chat/completions";
 const ANALYZE_MODEL = "deepseek-v4-flash";
-const AI_TIMEOUT_MS = 60_000;
+const AI_TIMEOUT_MS = 180_000;
+const AI_MAX_TOKENS = 16_000;
 
 // -- Context gathering bounds -----------------------------------------
 const SIGNAL_FILES = [
@@ -308,6 +309,45 @@ function buildAnalysisPrompt(issue, repoContext, repoFullName) {
   ].join("\n");
 }
 
+function extractMessageText(message) {
+  if (!message) return "";
+
+  if (typeof message.content === "string") {
+    return message.content.trim();
+  }
+
+  if (Array.isArray(message.content)) {
+    return message.content
+      .map((part) => {
+        if (!part) return "";
+        if (typeof part === "string") return part;
+        if (typeof part.text === "string") return part.text;
+        if (typeof part.content === "string") return part.content;
+        return "";
+      })
+      .filter(Boolean)
+      .join("\n")
+      .trim();
+  }
+
+  if (typeof message.reasoning_content === "string") {
+    return message.reasoning_content.trim();
+  }
+
+  return "";
+}
+
+function describeAiResponse(result) {
+  const choice = result?.choices?.[0];
+  const message = choice?.message;
+  const resultKeys = result ? Object.keys(result).join(", ") : "none";
+  const choiceKeys = choice ? Object.keys(choice).join(", ") : "none";
+  const messageKeys = message ? Object.keys(message).join(", ") : "none";
+  const finishReason = choice?.finish_reason || "unknown";
+
+  return `finish_reason=${finishReason}; response_keys=${resultKeys}; choice_keys=${choiceKeys}; message_keys=${messageKeys}`;
+}
+
 async function analyzeIssue(issue, repoContext, repoFullName) {
   const systemMsg = [
     "You are a senior open-source maintainer reviewing a GitHub issue.",
@@ -354,8 +394,9 @@ async function analyzeIssue(issue, repoContext, repoFullName) {
       { role: "system", content: systemMsg },
       { role: "user", content: userMsg },
     ],
-    max_tokens: 3500,
+    max_tokens: AI_MAX_TOKENS,
     temperature: 0.3,
+    thinking: { type: "disabled" },
   });
 
   log("info", `Sending issue #${issue.number} to AI for analysis…`);
@@ -364,12 +405,11 @@ async function analyzeIssue(issue, repoContext, repoFullName) {
     Authorization: `Bearer ${OPENCODE_API_KEY}`,
   });
 
-  const content =
-    (result.choices &&
-      result.choices[0] &&
-      result.choices[0].message &&
-      result.choices[0].message.content) ||
-    "⚠ AI returned no analysis content.";
+  const content = extractMessageText(result?.choices?.[0]?.message);
+
+  if (!content) {
+    throw new Error(`AI returned no final content (${describeAiResponse(result)})`);
+  }
 
   log("info", "Analysis received successfully.");
   return content;
