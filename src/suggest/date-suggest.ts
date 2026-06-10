@@ -7,10 +7,14 @@ import {
   EditorSuggestTriggerInfo
 } from "obsidian";
 import type NaturalLanguageDates from "src/main";
+import CalendarPickerModal from "src/modals/calendar-picker";
 import { generateMarkdownLink, getDateLinkAlias } from "src/utils";
+
+const CALENDAR_TRIGGER_LABEL = "Pick a date";
 
 interface IDateCompletion {
   label: string;
+  isCalendarTrigger?: boolean;
 }
 
 export default class DateSuggest extends EditorSuggest<IDateCompletion> {
@@ -34,18 +38,26 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
 
   getSuggestions(context: EditorSuggestContext): IDateCompletion[] {
     const suggestions = this.getDateSuggestions(context);
+    const showPicker = this.plugin.settings.showDatePickerInSuggest;
+
     if (suggestions.length) {
+      if (showPicker && (context.query === "" || CALENDAR_TRIGGER_LABEL.toLowerCase().startsWith(context.query.toLowerCase()))) {
+        return [...suggestions, { label: CALENDAR_TRIGGER_LABEL, isCalendarTrigger: true }];
+      }
       return suggestions;
     }
 
     // catch-all if there are no matches
-    return [{ label: context.query }];
+    const catchAll: IDateCompletion[] = [{ label: context.query }];
+    if (showPicker) catchAll.push({ label: CALENDAR_TRIGGER_LABEL, isCalendarTrigger: true });
+    return catchAll;
   }
 
   getDateSuggestions(
     context: EditorSuggestContext | { query: string },
-    defaults: string[] = ["Now", "Today", "Yesterday", "Tomorrow", "In 1 hour", "1 hour ago"]
+    defaults?: string[]
   ): IDateCompletion[] {
+    const resolvedDefaults = defaults ?? this.plugin.settings.suggestDefaults.split("\n").map((s) => s.trim()).filter(Boolean);
     if (context.query.match(/^time/)) {
       return ["now", "+15 minutes", "+1 hour", "-15 minutes", "-1 hour"]
         .map((val) => ({ label: `time:${val}` }))
@@ -85,17 +97,39 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       ].filter((items) => items.label.toLowerCase().startsWith(context.query));
     }
 
-    return defaults
+    return resolvedDefaults
       .map((label) => ({ label }))
       .filter((items) => items.label.toLowerCase().startsWith(context.query));
   }
 
   renderSuggestion(suggestion: IDateCompletion, el: HTMLElement): void {
-    el.setText(suggestion.label);
+    if (suggestion.isCalendarTrigger) {
+      el.addClass("nld-suggest-calendar");
+      el.createEl("span", { text: "📅 " });
+      el.createEl("span", { text: suggestion.label });
+    } else {
+      el.setText(suggestion.label);
+    }
   }
 
   selectSuggestion(suggestion: IDateCompletion, event: KeyboardEvent | MouseEvent): void {
     const { editor } = this.context;
+
+    if (suggestion.isCalendarTrigger) {
+      const start = { ...this.context.start };
+      const end = { ...this.context.end };
+      const makeIntoLink = this.plugin.settings.autosuggestToggleLink;
+
+      new CalendarPickerModal(this.app, this.plugin, (date: Date) => {
+        const formattedDate = window.moment(date).format(this.plugin.settings.format);
+        const dateStr = makeIntoLink
+          ? generateMarkdownLink(this.app, formattedDate)
+          : formattedDate;
+        editor.replaceRange(dateStr, start, end);
+      }).open();
+
+      return;
+    }
 
     const includeAlias = event.shiftKey;
     let dateStr = "";
