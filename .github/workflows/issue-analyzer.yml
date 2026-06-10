@@ -46,6 +46,8 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
           SMTP2GO_API_KEY: ${{ secrets.SMTP2GO_API_KEY }}
+          ISSUE_EMAIL_FROM: ${{ secrets.ISSUE_EMAIL_FROM }}
+          ISSUE_EMAIL_TO: ${{ secrets.ISSUE_EMAIL_TO }}
           ISSUE_ANALYZER_EMAIL_FROM: ${{ secrets.ISSUE_ANALYZER_EMAIL_FROM }}
           ISSUE_ANALYZER_EMAIL_TO: ${{ secrets.ISSUE_ANALYZER_EMAIL_TO }}
           ISSUE_ANALYZER_MODE: ${{ github.event_name == 'workflow_dispatch' && 'manual' || 'event' }}

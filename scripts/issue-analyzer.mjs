@@ -25,10 +25,12 @@
  *   OPENCODE_GO_API_KEY          – OpenCode Go API key (preferred)
  *   OPENCODE_API_KEY             – Fallback alias for the API key
  *   SMTP2GO_API_KEY              – SMTP2GO HTTP API key
- *   ISSUE_ANALYZER_EMAIL_FROM    – From: address (preferred)
+ *   ISSUE_EMAIL_FROM             – From: address (preferred)
+ *   ISSUE_ANALYZER_EMAIL_FROM    – Fallback From address
  *   PRIVATE_ISSUE_EMAIL_FROM     – Fallback From address
  *   ANALYZER_EMAIL_FROM          – Fallback From address
- *   ISSUE_ANALYZER_EMAIL_TO      – To: address (preferred)
+ *   ISSUE_EMAIL_TO               – To: address (preferred)
+ *   ISSUE_ANALYZER_EMAIL_TO      – Fallback To address
  *   PRIVATE_ISSUE_EMAIL_TO       – Fallback To address
  *   ANALYZER_EMAIL_TO            – Fallback To address
  *
@@ -58,11 +60,13 @@ const OPENCODE_API_KEY =
 const SMTP2GO_API_KEY = process.env.SMTP2GO_API_KEY || "";
 
 const EMAIL_FROM =
+  process.env.ISSUE_EMAIL_FROM ||
   process.env.ISSUE_ANALYZER_EMAIL_FROM ||
   process.env.PRIVATE_ISSUE_EMAIL_FROM ||
   process.env.ANALYZER_EMAIL_FROM ||
   "";
 const EMAIL_TO =
+  process.env.ISSUE_EMAIL_TO ||
   process.env.ISSUE_ANALYZER_EMAIL_TO ||
   process.env.PRIVATE_ISSUE_EMAIL_TO ||
   process.env.ANALYZER_EMAIL_TO ||
@@ -469,8 +473,8 @@ async function main() {
   const errors = [];
   if (!OPENCODE_API_KEY) errors.push("OPENCODE_GO_API_KEY not set");
   if (!SMTP2GO_API_KEY) errors.push("SMTP2GO_API_KEY not set");
-  if (!EMAIL_FROM) errors.push("ISSUE_ANALYZER_EMAIL_FROM not set");
-  if (!EMAIL_TO) errors.push("ISSUE_ANALYZER_EMAIL_TO not set");
+  if (!EMAIL_FROM) errors.push("ISSUE_EMAIL_FROM not set");
+  if (!EMAIL_TO) errors.push("ISSUE_EMAIL_TO not set");
 
   if (errors.length > 0) {
     log("error", `Missing configuration: ${errors.join("; ")}`);
