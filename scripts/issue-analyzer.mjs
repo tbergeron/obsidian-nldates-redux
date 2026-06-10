@@ -24,13 +24,12 @@
  *   ISSUE_ANALYZER_ISSUE_NUMBER  – Issue number for manual mode
  *   OPENCODE_GO_API_KEY          – OpenCode Go API key (preferred)
  *   OPENCODE_API_KEY             – Fallback alias for the API key
- *   SMTP2GO_HOST                 – SMTP2GO host (default mail.smtp2go.com)
- *   SMTP2GO_PORT                 – SMTP2GO port (default 2525)
- *   SMTP2GO_USERNAME             – SMTP2GO auth username
- *   SMTP2GO_PASSWORD             – SMTP2GO auth password
+ *   SMTP2GO_API_KEY              – SMTP2GO HTTP API key
  *   ISSUE_ANALYZER_EMAIL_FROM    – From: address (preferred)
+ *   PRIVATE_ISSUE_EMAIL_FROM     – Fallback From address
  *   ANALYZER_EMAIL_FROM          – Fallback From address
  *   ISSUE_ANALYZER_EMAIL_TO      – To: address (preferred)
+ *   PRIVATE_ISSUE_EMAIL_TO       – Fallback To address
  *   ANALYZER_EMAIL_TO            – Fallback To address
  *
  * Safety notes:
@@ -38,12 +37,11 @@
  *   - Prompt injection warning is included in the AI system message.
  *   - Secrets are never written to logs beyond a coarse "configured" check.
  *   - File reads are bounded per-file (50 KB) and in total (200 KB).
- *   - Only uses Node.js built-in modules: fs, path, net, tls, https.
+ *   - Only uses Node.js built-in modules: fs, path, https.
  */
 
 import { readFileSync, readdirSync, statSync } from "fs";
 import { resolve, join, relative } from "path";
-import * as net from "net";
 import * as https from "https";
 
 /* ------------------------------------------------------------------ */
@@ -57,18 +55,16 @@ const REPO_ROOT = resolve(__dirname, "..");
 const OPENCODE_API_KEY =
   process.env.OPENCODE_GO_API_KEY || process.env.OPENCODE_API_KEY || "";
 
-const SMTP_HOST = (process.env.SMTP2GO_HOST && process.env.SMTP2GO_HOST.trim())
-  || "mail.smtp2go.com";
-const SMTP_PORT = parseInt(process.env.SMTP2GO_PORT || "2525", 10);
-const SMTP_USER = process.env.SMTP2GO_USERNAME || "";
-const SMTP_PASS = process.env.SMTP2GO_PASSWORD || "";
+const SMTP2GO_API_KEY = process.env.SMTP2GO_API_KEY || "";
 
 const EMAIL_FROM =
   process.env.ISSUE_ANALYZER_EMAIL_FROM ||
+  process.env.PRIVATE_ISSUE_EMAIL_FROM ||
   process.env.ANALYZER_EMAIL_FROM ||
   "";
 const EMAIL_TO =
   process.env.ISSUE_ANALYZER_EMAIL_TO ||
+  process.env.PRIVATE_ISSUE_EMAIL_TO ||
   process.env.ANALYZER_EMAIL_TO ||
   "";
 
@@ -358,157 +354,44 @@ async function analyzeIssue(issue, repoContext, repoFullName) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  SMTP email via raw TCP (Node built-in net module)                   */
+/*  Email via SMTP2GO HTTP API (Node built-in https)                    */
 /* ------------------------------------------------------------------ */
 
 /**
- * Send an email through SMTP2GO using raw SMTP (AUTH LOGIN).
- * We connect over plain TCP on the configured port; SMTP2GO accepts
- * authenticated SMTP on ports 2525, 587, and 8025 without mandatory TLS.
- * Node built-in `net` is used – no third-party SMTP dependencies.
+ * Send an email through SMTP2GO using their HTTP API v3.
+ * Auth is via api_key in the JSON request body so no custom headers
+ * or raw SMTP connections are needed.
+ * Uses Node built-in https – no third-party dependencies.
  */
 async function sendEmail(from, to, subject, text) {
   if (!from || !to) {
     throw new Error("EMAIL_FROM and EMAIL_TO must be configured");
   }
+  if (!SMTP2GO_API_KEY) {
+    throw new Error("SMTP2GO_API_KEY is not configured");
+  }
 
-  log("info", `Sending email to ${to} via ${SMTP_HOST}:${SMTP_PORT}…`);
+  log("info", `Sending email to ${to} via SMTP2GO API…`);
 
-  const socket = new net.Socket();
-  const timeout = 30_000;
-
-  return new Promise((resolve, reject) => {
-    let buffer = "";
-    let step = 0;
-    let done = false;
-    let timer = setTimeout(() => cleanup(new Error("SMTP timeout")), timeout);
-
-    function cleanup(err) {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      socket.destroy();
-      if (err) reject(err);
-    }
-
-    function sendLine(line) {
-      socket.write(line + "\r\n");
-    }
-
-    function advance() {
-      step++;
-      executeStep();
-    }
-
-    function executeStep() {
-      try {
-        switch (step) {
-          case 0:
-            break; // wait for greeting
-          case 1:
-            sendLine("EHLO issue-analyzer");
-            break;
-          case 2:
-            sendLine("AUTH LOGIN");
-            break;
-          case 3:
-            sendLine(Buffer.from(SMTP_USER, "utf8").toString("base64"));
-            break;
-          case 4:
-            sendLine(Buffer.from(SMTP_PASS, "utf8").toString("base64"));
-            break;
-          case 5:
-            sendLine(`MAIL FROM:<${from}>`);
-            break;
-          case 6:
-            sendLine(`RCPT TO:<${to}>`);
-            break;
-          case 7:
-            sendLine("DATA");
-            break;
-          case 8: {
-            // Construct RFC 2822 message
-            // Dot-stuff lines starting with "." (RFC 5321 §4.5.2) so that a
-            // bare "." on its own line does not prematurely terminate SMTP DATA.
-            const safeText = text.replace(/^\./gm, "..");
-            const msg =
-              [
-                `From: ${from}`,
-                `To: ${to}`,
-                `Subject: ${subject}`,
-                "MIME-Version: 1.0",
-                "Content-Type: text/plain; charset=UTF-8",
-                "Content-Transfer-Encoding: quoted-printable",
-                "",
-                safeText,
-                ".",
-              ].join("\r\n") + "\r\n";
-            sendLine(msg);
-            break;
-          }
-          case 9:
-            sendLine("QUIT");
-            break;
-          default:
-            cleanup(null);
-            resolve();
-        }
-      } catch (err) {
-        cleanup(err);
-      }
-    }
-
-    function isFinalLine(line) {
-      // SMTP multiline responses have "-" at position 3, final line has " "
-      return line.length >= 4 && line[3] === " ";
-    }
-
-    function handleResponseLine(line) {
-      const code = parseInt(line.substring(0, 3), 10);
-      if (code >= 400) {
-        cleanup(new Error(`SMTP error: ${line.trim()}`));
-        return false;
-      }
-      return true;
-    }
-
-    socket.on("data", (data) => {
-      buffer += data.toString();
-
-      let idx;
-      while ((idx = buffer.indexOf("\r\n")) !== -1) {
-        const line = buffer.substring(0, idx);
-        buffer = buffer.substring(idx + 2);
-
-        // Skip continuation lines (non-final in a multi-line response)
-        if (!isFinalLine(line)) continue;
-
-        if (!handleResponseLine(line)) return;
-
-        // Advance to next step
-        // Reset timer on each successful response
-        clearTimeout(timer);
-        timer = setTimeout(
-          () => cleanup(new Error("SMTP timeout")),
-          timeout,
-        );
-
-        advance();
-      }
-    });
-
-    socket.on("error", (err) => cleanup(err));
-    socket.on("close", () => {
-      if (!done) cleanup(new Error("SMTP connection closed unexpectedly"));
-    });
-
-    socket.connect(SMTP_PORT, SMTP_HOST, () => {
-      // Connection established – step 0 will advance on greeting
-    });
-
-    // Start waiting for greeting
-    executeStep();
+  const body = JSON.stringify({
+    api_key: SMTP2GO_API_KEY,
+    to: [to],
+    from: from,
+    subject: subject,
+    text_body: text,
   });
+
+  const result = await httpsPost(
+    "https://api.smtp2go.com/v3/email/send",
+    body,
+  );
+
+  // SMTP2GO may return HTTP 200 with an error structure in data
+  if (result && result.data && result.data.failures && result.data.failures > 0) {
+    const errMsg = `SMTP2GO delivery failed (${result.data.failures} failure(s))`;
+    log("error", errMsg);
+    throw new Error(errMsg);
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -585,9 +468,7 @@ async function main() {
   // -- Validate required configuration (without leaking values) -------
   const errors = [];
   if (!OPENCODE_API_KEY) errors.push("OPENCODE_GO_API_KEY not set");
-  if (!SMTP_USER) errors.push("SMTP2GO_USERNAME not set");
-  if (!SMTP_PASS) errors.push("SMTP2GO_PASSWORD not set (value hidden)");
-  if (!SMTP_HOST) errors.push("SMTP2GO_HOST not set and no default resolved");
+  if (!SMTP2GO_API_KEY) errors.push("SMTP2GO_API_KEY not set");
   if (!EMAIL_FROM) errors.push("ISSUE_ANALYZER_EMAIL_FROM not set");
   if (!EMAIL_TO) errors.push("ISSUE_ANALYZER_EMAIL_TO not set");
 
