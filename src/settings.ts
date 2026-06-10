@@ -17,6 +17,8 @@ export interface NLDSettings {
   autocompleteTriggerPhrase: string;
   isAutosuggestEnabled: boolean;
   appendTimeToDateWhenRelated: boolean;
+  showDatePickerInSuggest: boolean;
+  suggestDefaults: string;
 
   format: string;
   defaultAlias: string;
@@ -34,6 +36,8 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   autocompleteTriggerPhrase: "@",
   isAutosuggestEnabled: true,
   appendTimeToDateWhenRelated: true,
+  showDatePickerInSuggest: true,
+  suggestDefaults: "Now\nToday\nYesterday\nTomorrow\nIn 1 hour\n1 hour ago",
 
   format: "YYYY-MM-DD",
   defaultAlias: "",
@@ -196,5 +200,31 @@ export class NLDSettingsTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    new Setting(containerEl)
+      .setName("Show date picker in suggestions")
+      .setDesc("When enabled, a 'Pick a date' option appears in the suggestion dropdown to open the calendar picker.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showDatePickerInSuggest)
+          .onChange(async (value) => {
+            this.plugin.settings.showDatePickerInSuggest = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Default suggestions")
+      .setDesc("One suggestion per line. These appear when the dropdown first opens.")
+      .addTextArea((text) => {
+        text
+          .setPlaceholder("Now\nToday\nYesterday\nTomorrow\nIn 1 hour\n1 hour ago")
+          .setValue(this.plugin.settings.suggestDefaults)
+          .onChange(async (value) => {
+            this.plugin.settings.suggestDefaults = value || DEFAULT_SETTINGS.suggestDefaults;
+            await this.plugin.saveSettings();
+          });
+        text.inputEl.rows = 6;
+      });
   }
 }
