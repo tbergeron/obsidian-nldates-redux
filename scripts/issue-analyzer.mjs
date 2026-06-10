@@ -379,8 +379,8 @@ async function sendEmail(from, to, subject, text) {
 
   const body = JSON.stringify({
     api_key: SMTP2GO_API_KEY,
+    sender: from,
     to: [to],
-    from: from,
     subject: subject,
     text_body: text,
   });
@@ -390,9 +390,15 @@ async function sendEmail(from, to, subject, text) {
     body,
   );
 
-  // SMTP2GO may return HTTP 200 with an error structure in data
-  if (result && result.data && result.data.failures && result.data.failures > 0) {
-    const errMsg = `SMTP2GO delivery failed (${result.data.failures} failure(s))`;
+  // SMTP2GO may return HTTP 200 with delivery failures in the response body.
+  const failed = Number(result?.data?.failed || 0);
+  const succeeded = Number(result?.data?.succeeded || 0);
+  const failures = Array.isArray(result?.data?.failures)
+    ? result.data.failures.length
+    : 0;
+
+  if (failed > 0 || failures > 0 || succeeded < 1) {
+    const errMsg = `SMTP2GO delivery failed (${failed || failures || "unknown"} failure(s))`;
     log("error", errMsg);
     throw new Error(errMsg);
   }
