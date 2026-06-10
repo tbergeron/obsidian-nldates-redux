@@ -3,14 +3,25 @@
 /**
  * Issue Analyzer
  *
- * Reads a GitHub issue event from GITHUB_EVENT_PATH, gathers repository context
- * from high-signal source files, asks an AI model (OpenCode Go / deepseek-v4-flash)
- * to analyze the issue, and emails a maintainer-only analysis report via SMTP2GO.
+ * Supports two modes:
+ *   1. Event mode (default): triggered by GitHub issue events (opened/reopened/edited).
+ *      Reads the event payload from GITHUB_EVENT_PATH.
+ *   2. Manual mode: triggered by workflow_dispatch. Fetches the issue via
+ *      GET /repos/{owner}/{repo}/issues/{issue_number} using GITHUB_TOKEN.
+ *
+ * In both modes, it gathers repository context from high-signal source files,
+ * asks an AI model (OpenCode Go / deepseek-v4-flash) to analyze the issue,
+ * and emails a maintainer-only analysis report via SMTP2GO.
+ *
+ * Manual mode never edits/comments/reopens the issue or creates public visibility.
+ * Only GET requests are made to the GitHub API.
  *
  * Environment variables (preferred name / backwards-compatible alias):
  *   GITHUB_EVENT_PATH            – Path to the JSON event payload (set by Actions)
  *   GITHUB_REPOSITORY            – "owner/repo" string
- *   GITHUB_TOKEN                 – GitHub token (unused here, available for future use)
+ *   GITHUB_TOKEN                 – GitHub token (used for API fetch in manual mode)
+ *   ISSUE_ANALYZER_MODE          – "manual" or "event" (default "event")
+ *   ISSUE_ANALYZER_ISSUE_NUMBER  – Issue number for manual mode
  *   OPENCODE_GO_API_KEY          – OpenCode Go API key (preferred)
  *   OPENCODE_API_KEY             – Fallback alias for the API key
  *   SMTP2GO_HOST                 – SMTP2GO host (default mail.smtp2go.com)
@@ -501,6 +512,72 @@ async function sendEmail(from, to, subject, text) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  GitHub API (read-only fetch for manual mode)                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Fetch a GitHub issue via GET /repos/{owner}/{repo}/issues/{number}.
+ * Used only in manual (workflow_dispatch) mode.
+ * Only performs read operations – never creates, edits, or comments.
+ */
+function fetchIssue(repoFullName, issueNumber) {
+  return new Promise((resolve, reject) => {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      reject(new Error("GITHUB_TOKEN is not set"));
+      return;
+    }
+
+    const url = `https://api.github.com/repos/${repoFullName}/issues/${issueNumber}`;
+    const urlObj = new URL(url);
+
+    const opts = {
+      hostname: urlObj.hostname,
+      port: 443,
+      path: urlObj.pathname + urlObj.search,
+      method: "GET",
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+        Authorization: `token ${token}`,
+        "User-Agent": "issue-analyzer",
+      },
+    };
+
+    const req = https.request(opts, (res) => {
+      let data = "";
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode && res.statusCode >= 400) {
+            const errMsg =
+              (parsed.message) ||
+              `HTTP ${res.statusCode}: ${data.slice(0, 200)}`;
+            reject(new Error(errMsg));
+          } else {
+            resolve(parsed);
+          }
+        } catch {
+          reject(
+            new Error(
+              `Invalid JSON response (HTTP ${res.statusCode}): ${data.slice(
+                0,
+                200,
+              )}`,
+            ),
+          );
+        }
+      });
+    });
+
+    req.on("error", reject);
+    req.end();
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -520,41 +597,94 @@ async function main() {
     return;
   }
 
-  // -- Read event ----------------------------------------------------
-  let event;
-  try {
-    event = readEvent();
-  } catch (err) {
-    log("error", `Failed to read event: ${err.message}`);
-    process.exitCode = 1;
-    return;
-  }
-
   const repoFullName =
     process.env.GITHUB_REPOSITORY || "unknown/unknown";
-  const issueNumber = event.issue && event.issue.number;
-  const issueTitle = (event.issue && event.issue.title) || "(no title)";
+  const mode = process.env.ISSUE_ANALYZER_MODE || "event";
 
-  log(
-    "info",
-    `Processing ${event.action} event for ${repoFullName}#${issueNumber}: ${issueTitle}`,
-  );
+  // -- Resolve issue (event mode vs manual dispatch) ------------------
+  let issue;
+  let eventAction;
 
-  // -- Filter edited events without meaningful changes ----------------
-  if (!isMeaningfulEdit(event)) {
+  if (mode === "manual") {
+    eventAction = "manual";
+    const issueNumberStr = process.env.ISSUE_ANALYZER_ISSUE_NUMBER;
+    if (!issueNumberStr) {
+      log("error", "ISSUE_ANALYZER_ISSUE_NUMBER is required in manual mode");
+      process.exitCode = 1;
+      return;
+    }
+    const parsed = parseInt(issueNumberStr, 10);
+    if (
+      !Number.isInteger(parsed) || parsed <= 0 ||
+      String(parsed) !== issueNumberStr.trim()
+    ) {
+      log(
+        "error",
+        `Invalid issue number: "${issueNumberStr}" – must be a positive integer`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    log("info", `Manual dispatch: fetching ${repoFullName}#${parsed}…`);
+
+    try {
+      issue = await fetchIssue(repoFullName, parsed);
+    } catch (err) {
+      log("error", `Failed to fetch issue: ${err.message}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    // Reject pull requests – the GitHub API issues endpoint returns PRs too
+    if (issue.pull_request) {
+      log(
+        "error",
+        `Issue #${parsed} is a pull request – not supported`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+  } else {
+    // Event mode (issues opened / reopened / edited)
+    let event;
+    try {
+      event = readEvent();
+    } catch (err) {
+      log("error", `Failed to read event: ${err.message}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const issueNumber = event.issue && event.issue.number;
+    const issueTitle = (event.issue && event.issue.title) || "(no title)";
+
     log(
       "info",
-      "Skipping – edited event with no title/body change.",
+      `Processing ${event.action} event for ${repoFullName}#${issueNumber}: ${issueTitle}`,
     );
-    return;
+
+    // Filter edited events without meaningful changes
+    if (!isMeaningfulEdit(event)) {
+      log(
+        "info",
+        "Skipping – edited event with no title/body change.",
+      );
+      return;
+    }
+
+    issue = event.issue;
+    if (!issue) {
+      log("error", "Event payload has no issue object");
+      process.exitCode = 1;
+      return;
+    }
+
+    eventAction = event.action;
   }
 
-  const issue = event.issue;
-  if (!issue) {
-    log("error", "Event payload has no issue object");
-    process.exitCode = 1;
-    return;
-  }
+  const issueNumber = issue.number;
+  const issueTitle = issue.title || "(no title)";
 
   // -- Gather repository context -------------------------------------
   log("info", "Gathering repository context…");
@@ -591,7 +721,7 @@ async function main() {
     `Issue #${issueNumber} in ${repoFullName}`,
     `URL: ${issue.html_url || "(not available)"}`,
     `Author: ${(issue.user && issue.user.login) || "unknown"}`,
-    `Action: ${event.action}`,
+    `Action: ${eventAction}`,
     "",
     "--- AI Analysis ---",
     "",

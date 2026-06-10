@@ -3,15 +3,22 @@ name: Issue Analyzer
 on:
   issues:
     types: [opened, reopened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to analyze"
+        required: true
+        type: number
 
 # Least-privilege token: contents read to checkout, issues read to read event payload
+# Manual workflow_dispatch also only uses read operations (GET /repos/*/issues/*).
 permissions:
   contents: read
   issues: read
 
-# Prevent redundant runs for the same issue (e.g. rapid edits)
+# Prevent redundant runs for the same issue (e.g. rapid edits or re-dispatches)
 concurrency:
-  group: issue-analyzer-${{ github.event.issue.number }}
+  group: issue-analyzer-${{ github.event.inputs.issue_number || github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
@@ -44,3 +51,5 @@ jobs:
           SMTP2GO_PASSWORD: ${{ secrets.SMTP2GO_PASSWORD }}
           ISSUE_ANALYZER_EMAIL_FROM: ${{ secrets.ISSUE_ANALYZER_EMAIL_FROM }}
           ISSUE_ANALYZER_EMAIL_TO: ${{ secrets.ISSUE_ANALYZER_EMAIL_TO }}
+          ISSUE_ANALYZER_MODE: ${{ github.event_name == 'workflow_dispatch' && 'manual' || 'event' }}
+          ISSUE_ANALYZER_ISSUE_NUMBER: ${{ github.event.inputs.issue_number || github.event.issue.number }}
