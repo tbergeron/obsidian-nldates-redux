@@ -106,7 +106,26 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       dateStr = this.plugin.parseTime(timePart).formattedString;
       makeIntoLink = false;
     } else {
-      dateStr = this.plugin.parseDate(suggestion.label).formattedString;
+      const parsedDate = this.plugin.parseDate(suggestion.label);
+      dateStr = parsedDate.formattedString;
+
+      // When autosuggest-to-link is on, append-time is enabled, and the parsed
+      // result includes a time portion, wrap the full date-time as an alias
+      // on the date-only target (e.g. [[2025-04-29|2025-04-29 15:44]]).
+      // Shift+Enter preserves the typed query as the alias instead.
+      if (makeIntoLink && this.plugin.settings.appendTimeToDateWhenRelated) {
+        const dateOnly = parsedDate.moment.format(this.plugin.settings.format);
+        const timeOnly = parsedDate.moment.format(this.plugin.settings.timeFormat);
+        const expectedFullDatetime = dateOnly + this.plugin.settings.separator + timeOnly;
+
+        if (dateStr === expectedFullDatetime) {
+          const alias = includeAlias
+            ? this.context.query || suggestion.label
+            : dateStr;
+          dateStr = generateMarkdownLink(this.app, dateOnly, alias);
+          makeIntoLink = false; // already handled
+        }
+      }
     }
 
     if (makeIntoLink) {
