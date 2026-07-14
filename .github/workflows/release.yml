@@ -6,6 +6,9 @@ on:
       - "*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   PLUGIN_NAME: nldates-redux
 
@@ -25,7 +28,7 @@ jobs:
           npm ci --legacy-peer-deps
           npm run build --if-present
           mkdir ${{ env.PLUGIN_NAME }}
-          cp main.js manifest.json ${{ env.PLUGIN_NAME }}
+          cp main.js manifest.json styles.css ${{ env.PLUGIN_NAME }}
           zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
           ls
       - name: Create Release
@@ -39,5 +42,6 @@ jobs:
             ${{ env.PLUGIN_NAME }}.zip
             main.js
             manifest.json
+            styles.css
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
