@@ -102,6 +102,10 @@ export function generateMarkdownLink(app: App, subpath: string, alias?: string) 
   }
 }
 
+export function getDateLinkPath(date: string, folder: string): string {
+  return normalizePath(folder.trim() ? `${folder}/${date}` : date);
+}
+
 // export function generateMarkdownLink(app: App, path: string, alias?: string) {
 // NOTE: did not work because getAbstractFileByPath cannot be used with non-existing files?
 // const file = app.vault.getAbstractFileByPath(path) as TFile;

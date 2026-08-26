@@ -26,6 +26,8 @@ Expand dates using natural language inline within the editor view.
 
 Typing `@today` <kbd>Enter</kbd> will automatically be expanded to the current date. Press <kbd>Shift</kbd> at the same time to keep the input text as an alias (e.g. `@today` → `[[202112-27|today]]`).
 
+Set **Linked date folder** to a vault folder such as `Journal` to generate links like `[[Journal/2021-12-27]]` from autosuggestions, commands, and the date picker. Leave it blank to keep links at the vault root.
+
 ---
 
 ## `nldates` URI Action
