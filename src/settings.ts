@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting, TextAreaComponent } from "obsidian";
 import NaturalLanguageDates from "./main";
 import { getLocaleWeekStart } from "./utils";
 
@@ -17,6 +17,8 @@ export interface NLDSettings {
   autocompleteTriggerPhrase: string;
   isAutosuggestEnabled: boolean;
   appendTimeToDateWhenRelated: boolean;
+  showDatePickerInSuggest: boolean;
+  suggestDefaults: string;
 
   format: string;
   defaultAlias: string;
@@ -29,11 +31,15 @@ export interface NLDSettings {
   modalMomentFormat: string;
 }
 
+export const DEFAULT_SUGGEST_DEFAULTS = "Now\nToday\nYesterday\nTomorrow\nIn 1 hour\n1 hour ago";
+
 export const DEFAULT_SETTINGS: NLDSettings = {
   autosuggestToggleLink: true,
   autocompleteTriggerPhrase: "@",
   isAutosuggestEnabled: true,
   appendTimeToDateWhenRelated: true,
+  showDatePickerInSuggest: true,
+  suggestDefaults: DEFAULT_SUGGEST_DEFAULTS,
 
   format: "YYYY-MM-DD",
   defaultAlias: "",
@@ -193,6 +199,44 @@ export class NLDSettingsTab extends PluginSettingTab {
           .setValue(this.plugin.settings.defaultAlias)
           .onChange(async (value) => {
             this.plugin.settings.defaultAlias = value || "";
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Show date picker in suggestions")
+      .setDesc("When enabled, a 'pick a date' option appears in the suggestion dropdown to open the calendar picker.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showDatePickerInSuggest)
+          .onChange(async (value) => {
+            this.plugin.settings.showDatePickerInSuggest = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    let defaultSuggestionsText: TextAreaComponent;
+    new Setting(containerEl)
+      .setName("Default suggestions")
+      .setDesc("One suggestion per line. These appear when the dropdown first opens.")
+      .addTextArea((text) => {
+        defaultSuggestionsText = text;
+        text
+          .setPlaceholder(DEFAULT_SUGGEST_DEFAULTS)
+          .setValue(this.plugin.settings.suggestDefaults)
+          .onChange(async (value) => {
+            this.plugin.settings.suggestDefaults = value;
+            await this.plugin.saveSettings();
+          });
+        text.inputEl.rows = 6;
+      })
+      .addExtraButton((button) =>
+        button
+          .setIcon("reset")
+          .setTooltip("Reset default suggestions")
+          .onClick(async () => {
+            this.plugin.settings.suggestDefaults = DEFAULT_SUGGEST_DEFAULTS;
+            defaultSuggestionsText.setValue(DEFAULT_SUGGEST_DEFAULTS);
             await this.plugin.saveSettings();
           })
       );
