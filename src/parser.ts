@@ -75,8 +75,9 @@ export default class NLDParser {
       weekStart: getWeekNumber(weekStart),
     };
 
-    const thisDateMatch = selectedText.match(/this\s([\w]+)/i);
-    const nextDateMatch = selectedText.match(/next\s([\w]+)/i);
+    const periodicDateMatch = selectedText
+      .trim()
+      .match(/^(this|next|last)\s+(week|month|quarter|year)$/i);
     const relativeWeekdayMatch = selectedText.match(
       /\b(?:this|next|last)\s+(?:sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i,
     );
@@ -85,32 +86,24 @@ export default class NLDParser {
 
     const referenceDate = new Date();
 
-    if (thisDateMatch && thisDateMatch[1] === "week") {
-      return parser.parseDate(`this ${String(weekStart)}`, referenceDate);
-    }
+    if (periodicDateMatch) {
+      const direction = periodicDateMatch[1].toLowerCase();
+      const period = periodicDateMatch[2].toLowerCase();
+      const offset = direction === "next" ? 1 : direction === "last" ? -1 : 0;
+      const date = window.moment(referenceDate).startOf("day");
 
-    if (nextDateMatch && nextDateMatch[1] === "week") {
-      return parser.parseDate(`next ${String(weekStart)}`, referenceDate, {
-        forwardDate: true,
-      });
-    }
-
-    if (nextDateMatch && nextDateMatch[1] === "month") {
-      const thisMonth = parser.parseDate("this month", new Date(), {
-        forwardDate: true,
-      });
-      return parser.parseDate(selectedText, thisMonth, {
-        forwardDate: true,
-      });
-    }
-
-    if (nextDateMatch && nextDateMatch[1] === "year") {
-      const thisYear = parser.parseDate("this year", new Date(), {
-        forwardDate: true,
-      });
-      return parser.parseDate(selectedText, thisYear, {
-        forwardDate: true,
-      });
+      if (period === "week") {
+        const daysSinceWeekStart =
+          (date.day() - getWeekNumber(weekStart) + 7) % 7;
+        return date.subtract(daysSinceWeekStart, "days").add(offset, "weeks").toDate();
+      }
+      if (period === "month") {
+        return date.startOf("month").add(offset, "months").toDate();
+      }
+      if (period === "quarter") {
+        return date.startOf("quarter").add(offset, "quarters").toDate();
+      }
+      return date.startOf("year").add(offset, "years").toDate();
     }
 
     if (lastDayOfMatch) {

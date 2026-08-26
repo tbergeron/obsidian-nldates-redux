@@ -79,6 +79,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       return [
         "week",
         "month",
+        "quarter",
         "year",
         "Sunday",
         "Monday",

@@ -135,7 +135,17 @@ export default class NaturalLanguageDates extends Plugin {
     @returns NLDResult: An object containing the date, a cloned Moment and the formatted string.
   */
   parseDate(dateString: string): NLDResult {
-    let format = this.settings.format;
+    const period = dateString
+      .trim()
+      .match(/^(?:this|next|last)\s+(week|month|quarter|year)$/i)?.[1]
+      .toLowerCase() as "week" | "month" | "quarter" | "year" | undefined;
+    const periodicFormats = {
+      week: this.settings.weekFormat,
+      month: this.settings.monthFormat,
+      quarter: this.settings.quarterFormat,
+      year: this.settings.yearFormat,
+    };
+    let format = period ? periodicFormats[period] : this.settings.format;
     if (this.settings.appendTimeToDateWhenRelated) {
       // assume it's date time if it contains time keywords or time patterns:
       const hasTimeKeywords = dateString.match(/\bat\b|\bnow\b|\bin\b|\bago\b/gi);
