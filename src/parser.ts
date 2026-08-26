@@ -77,12 +77,13 @@ export default class NLDParser {
 
     const thisDateMatch = selectedText.match(/this\s([\w]+)/i);
     const nextDateMatch = selectedText.match(/next\s([\w]+)/i);
+    const relativeWeekdayMatch = selectedText.match(
+      /\b(?:this|next|last)\s+(?:sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i,
+    );
     const lastDayOfMatch = selectedText.match(/(last day of|end of)\s*([^\n\r]*)/i);
     const midOf = selectedText.match(/mid\s([\w]+)/i);
 
-    const referenceDate = weekdayIsCertain
-      ? window.moment().weekday(0).toDate()
-      : new Date();
+    const referenceDate = new Date();
 
     if (thisDateMatch && thisDateMatch[1] === "week") {
       return parser.parseDate(`this ${String(weekStart)}`, referenceDate);
@@ -129,6 +130,9 @@ export default class NLDParser {
       });
     }
 
-    return parser.parseDate(selectedText, referenceDate, { locale });
+    return parser.parseDate(selectedText, referenceDate, {
+      locale,
+      forwardDate: weekdayIsCertain && !relativeWeekdayMatch,
+    });
   }
 }
