@@ -21,6 +21,7 @@ export interface NLDSettings {
   suggestDefaults: string;
 
   format: string;
+  linkDateFolder: string;
   defaultAlias: string;
   timeFormat: string;
   separator: string;
@@ -42,6 +43,7 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   suggestDefaults: DEFAULT_SUGGEST_DEFAULTS,
 
   format: "YYYY-MM-DD",
+  linkDateFolder: "",
   defaultAlias: "",
   timeFormat: "HH:mm",
   separator: " ",
@@ -88,6 +90,19 @@ export class NLDSettingsTab extends PluginSettingTab {
           .setValue(this.plugin.settings.format)
           .onChange(async (value) => {
             this.plugin.settings.format = value || "YYYY-MM-DD";
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Linked date folder")
+      .setDesc("Store linked dates in this vault folder. Leave blank to use the vault root.")
+      .addText((text) =>
+        text
+          .setPlaceholder("Journal")
+          .setValue(this.plugin.settings.linkDateFolder)
+          .onChange(async (value) => {
+            this.plugin.settings.linkDateFolder = value.trim();
             await this.plugin.saveSettings();
           })
       );

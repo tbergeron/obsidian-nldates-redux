@@ -8,7 +8,7 @@ import {
 } from "obsidian";
 import type NaturalLanguageDates from "src/main";
 import CalendarPickerModal from "src/modals/calendar-picker";
-import { generateMarkdownLink, getDateLinkAlias } from "src/utils";
+import { generateMarkdownLink, getDateLinkAlias, getDateLinkPath } from "src/utils";
 
 const CALENDAR_TRIGGER_LABEL = "Pick a date";
 
@@ -139,7 +139,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
         const dateStr = makeIntoLink
           ? generateMarkdownLink(
             this.app,
-            formattedDate,
+            getDateLinkPath(formattedDate, this.plugin.settings.linkDateFolder),
             defaultAlias ? window.moment(date).format(defaultAlias) : undefined
           )
           : formattedDate;
@@ -174,7 +174,11 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
           const alias = includeAlias
             ? this.context.query || suggestion.label
             : dateStr;
-          dateStr = generateMarkdownLink(this.app, dateOnly, alias);
+          dateStr = generateMarkdownLink(
+            this.app,
+            getDateLinkPath(dateOnly, this.plugin.settings.linkDateFolder),
+            alias
+          );
           makeIntoLink = false; // already handled
         }
       }
@@ -187,7 +191,7 @@ export default class DateSuggest extends EditorSuggest<IDateCompletion> {
       const alias = getDateLinkAlias(this.plugin, aliasInput, includeAlias);
       dateStr = generateMarkdownLink(
         this.app,
-        dateStr,
+        getDateLinkPath(dateStr, this.plugin.settings.linkDateFolder),
         alias
       );
     }
