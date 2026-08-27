@@ -21,6 +21,10 @@ export interface NLDSettings {
   suggestDefaults: string;
 
   format: string;
+  weekFormat: string;
+  monthFormat: string;
+  quarterFormat: string;
+  yearFormat: string;
   defaultAlias: string;
   timeFormat: string;
   separator: string;
@@ -42,6 +46,10 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   suggestDefaults: DEFAULT_SUGGEST_DEFAULTS,
 
   format: "YYYY-MM-DD",
+  weekFormat: "gggg-[W]ww",
+  monthFormat: "YYYY-MM",
+  quarterFormat: "YYYY-[Q]Q",
+  yearFormat: "YYYY",
   defaultAlias: "",
   timeFormat: "HH:mm",
   separator: " ",
@@ -91,6 +99,29 @@ export class NLDSettingsTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    const periodicFormats = [
+      ["Week", "weekFormat"],
+      ["Month", "monthFormat"],
+      ["Quarter", "quarterFormat"],
+      ["Year", "yearFormat"],
+    ] as const;
+
+    periodicFormats.forEach(([period, setting]) => {
+      const defaultFormat = DEFAULT_SETTINGS[setting];
+      new Setting(containerEl)
+        .setName(`${period} format`)
+        .setDesc(`Used for this, next, and last ${period.toLowerCase()}.`)
+        .addMomentFormat((text) =>
+          text
+            .setDefaultFormat(defaultFormat)
+            .setValue(this.plugin.settings[setting])
+            .onChange(async (value) => {
+              this.plugin.settings[setting] = value || defaultFormat;
+              await this.plugin.saveSettings();
+            })
+        );
+    });
 
     new Setting(containerEl)
       .setName("Time format")
